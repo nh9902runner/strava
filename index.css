@@ -391,7 +391,9 @@ header {
 
 .runner-meta {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .runner-name {
@@ -405,7 +407,6 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 6px;
 }
 
 .progress-track {
