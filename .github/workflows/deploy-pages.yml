@@ -1,0 +1,46 @@
+name: Deploy Landing Page to Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+# Quyền hạn cần thiết để deploy lên GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Đảm bảo không chạy chồng chéo các tiến trình deploy
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inject Google Sheet Webapp URL from Secrets
+        run: |
+          # Tìm và thay thế cấu hình mặc định bằng giá trị trong GitHub Secrets
+          sed -i 's|const DEFAULT_WEBAPP_URL = "";|const DEFAULT_WEBAPP_URL = "${{ secrets.GOOGLE_SHEET_WEBAPP_URL }}";|g' index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload static files artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Tải lên toàn bộ thư mục chứa index.html và index.css
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
