@@ -220,25 +220,21 @@
           `;
         }
         
-        // Hiển thị ghi chú phạt / đạt mục tiêu ở tuần trước
+        // Hiển thị ghi chú phạt nuôi heo ở tuần trước
         let fineHtml = "";
-        if (currentActiveTab === "lastWeek") {
-          if (runner.note) {
-            let noteText = runner.note;
-            // Nếu note chỉ chứa số (VD: 20000), thêm dấu chấm phân cách hàng nghìn
-            if (/^\d+$/.test(noteText)) {
-              noteText = Number(noteText).toLocaleString('vi-VN');
-            }
-            // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
-            if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
-              noteText += " VNĐ";
-            } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
-              noteText = noteText.replace(/d|đ$/i, " VNĐ");
-            }
-            fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
-          } else if (runner.regKm > 0 && runner.actKm >= runner.regKm) {
-            fineHtml = `<span class="no-fine-badge"><i class="fas fa-check-circle"></i> Đạt mục tiêu</span>`;
+        if (currentActiveTab === "lastWeek" && runner.note) {
+          let noteText = runner.note;
+          // Nếu note chỉ chứa số (VD: 20000), thêm dấu chấm phân cách hàng nghìn
+          if (/^\d+$/.test(noteText)) {
+            noteText = Number(noteText).toLocaleString('vi-VN');
           }
+          // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
+          if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
+            noteText += " VNĐ";
+          } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
+            noteText = noteText.replace(/d|đ$/i, " VNĐ");
+          }
+          fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
         }
         
         const card = document.createElement("div");
@@ -249,9 +245,9 @@
             <div class="runner-meta">
               <span class="runner-name">${runner.name}</span>
               ${progressHtml}
-              ${fineHtml}
             </div>
           </div>
+          ${fineHtml}
           <div class="runner-stats" style="display: flex; align-items: center; gap: 50px; text-align: right;">
             <div class="stat-group" style="text-align: left;">
               <span class="stat-label">Đăng ký</span>
