@@ -184,8 +184,13 @@
       const listContainer = document.getElementById("leaderboardList");
       let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       
-      // Sắp xếp client-side theo tên (A-Z)
-      listData = [...listData].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+      // Sắp xếp: có đăng ký (regKm > 0) lên trên, không đăng ký xuống dưới; mỗi nhóm theo tên A-Z
+      listData = [...listData].sort((a, b) => {
+        const aReg = a.regKm > 0 ? 0 : 1;
+        const bReg = b.regKm > 0 ? 0 : 1;
+        if (aReg !== bReg) return aReg - bReg;
+        return a.name.localeCompare(b.name, 'vi');
+      });
       
       listContainer.innerHTML = "";
       
