@@ -73,53 +73,27 @@ header {
   position: relative;
 }
 
-.logo-container {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-/* nh logo matching the circular logo in the photo */
-.logo-nh {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, #0d367c, #001944);
-  border: 3px solid #ffffff;
-  border-radius: 50%;
+.header-main-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(0, 25, 68, 0.2);
-  position: relative;
-  overflow: hidden;
+  gap: 18px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
-.logo-nh::after {
-  content: 'NH';
-  font-family: 'Outfit', sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: -1.5px;
-  position: relative;
-  bottom: -4px;
-}
-
-.logo-nh::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  width: 10px;
-  height: 10px;
-  background-color: #ffd700;
-  clip-path: polygon(50% 0%, 15% 100%, 100% 43%, 0% 43%, 85% 100%);
+.logo-img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 15px rgba(123, 44, 191, 0.15);
+  object-fit: cover;
 }
 
 .club-title {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 34px;
+  font-weight: 900;
   background: linear-gradient(to right, #1a237e, #e02c98, #7b2cbf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
