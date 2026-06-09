@@ -189,26 +189,35 @@
       let renderedCount = 0;
       
       listData.forEach((runner, index) => {
-        // Filter by name
+        // LỌC: Chỉ hiển thị những người thực tế có chạy (actKm > 0)
+        if (runner.actKm <= 0) {
+          return;
+        }
+        
+        // Lọc theo từ khóa tìm kiếm tên
         if (searchQuery && !runner.name.toLowerCase().includes(searchQuery)) {
           return;
         }
         
         renderedCount++;
-        const rank = index + 1;
+        const rank = renderedCount;
         
-        // Progress Calculation
-        let progressPct = 0;
-        let progressClass = "none";
+        // Tính toán thanh tiến trình (% hoàn thành) - Chỉ hiện khi đăng ký chỉ tiêu (regKm > 0)
+        let progressHtml = "";
         if (runner.regKm > 0) {
-          progressPct = Math.min(100, Math.round((runner.actKm / runner.regKm) * 100));
-          progressClass = progressPct >= 100 ? "success" : "partial";
-        } else if (runner.actKm > 0) {
-          progressPct = 100; // No registration but active
-          progressClass = "success";
+          const progressPct = Math.min(100, Math.round((runner.actKm / runner.regKm) * 100));
+          const progressClass = progressPct >= 100 ? "success" : "partial";
+          progressHtml = `
+            <div class="goal-progress-container">
+              <div class="progress-track">
+                <div class="progress-fill ${progressClass}" style="width: ${progressPct}%"></div>
+              </div>
+              <span class="progress-percentage">${progressPct}%</span>
+            </div>
+          `;
         }
         
-        // Fine / Note display
+        // Hiển thị ghi chú phạt / đạt mục tiêu ở tuần trước
         let fineHtml = "";
         if (currentActiveTab === "lastWeek") {
           if (runner.note) {
@@ -225,12 +234,7 @@
             <div class="rank-number">${rank}</div>
             <div class="runner-meta">
               <span class="runner-name">${runner.name}</span>
-              <div class="goal-progress-container">
-                <div class="progress-track">
-                  <div class="progress-fill ${progressClass}" style="width: ${progressPct}%"></div>
-                </div>
-                <span class="progress-percentage">${progressPct}%</span>
-              </div>
+              ${progressHtml}
               ${fineHtml}
             </div>
           </div>
