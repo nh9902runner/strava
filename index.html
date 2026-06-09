@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NH9902 Running Club - Bảng xếp hạng thành tích</title>
+  <title>NH9902 RUNNERS</title>
   <!-- Google Fonts Outfit & FontAwesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -182,7 +182,10 @@
       
       const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
       const listContainer = document.getElementById("leaderboardList");
-      const listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
+      let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
+      
+      // Sắp xếp client-side theo số km thực tế (actKm) giảm dần
+      listData = [...listData].sort((a, b) => b.actKm - a.actKm);
       
       listContainer.innerHTML = "";
       
