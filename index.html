@@ -184,8 +184,8 @@
       const listContainer = document.getElementById("leaderboardList");
       let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       
-      // Sắp xếp client-side theo số km thực tế (actKm) giảm dần
-      listData = [...listData].sort((a, b) => b.actKm - a.actKm);
+      // Sắp xếp client-side theo tên (A-Z)
+      listData = [...listData].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
       
       listContainer.innerHTML = "";
       
@@ -252,7 +252,7 @@
               ${fineHtml}
             </div>
           </div>
-          <div class="runner-stats">
+          <div class="runner-stats" style="display: flex; align-items: center; gap: 50px; text-align: right;">
             <div class="stat-group" style="text-align: left;">
               <span class="stat-label">Đăng ký</span>
               <span class="stat-value reg-val">${runner.regKm} <span style="font-size: 10px;">km</span></span>
