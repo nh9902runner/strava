@@ -183,7 +183,6 @@
     function filterLeaderboard() {
       if (!rawData) return;
       
-      const searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
       const listContainer = document.getElementById("leaderboardList");
       let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       
@@ -202,11 +201,6 @@
       listData.forEach((runner, index) => {
         // LỌC: Chỉ hiển thị những người thực tế có chạy (actKm > 0)
         if (runner.actKm <= 0) {
-          return;
-        }
-        
-        // Lọc theo từ khóa tìm kiếm tên
-        if (searchQuery && !runner.name.toLowerCase().includes(searchQuery)) {
           return;
         }
         
