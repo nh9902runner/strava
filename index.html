@@ -132,6 +132,10 @@
         document.getElementById("loadingState").style.display = "none";
         document.getElementById("weekInfoCard").style.display = "flex";
         
+        if (rawData.lastUpdated) {
+          document.getElementById("updateBadge").innerHTML = `<i class="fas fa-clock"></i> Cập nhật: ${rawData.lastUpdated}`;
+        }
+        
         renderTab();
       } catch (error) {
         console.error(error);
