@@ -132,9 +132,7 @@
         document.getElementById("loadingState").style.display = "none";
         document.getElementById("weekInfoCard").style.display = "flex";
         
-        if (rawData.lastUpdated) {
-          document.getElementById("updateBadge").innerHTML = `<i class="fas fa-clock"></i> Cập nhật: ${rawData.lastUpdated}`;
-        }
+        updateBadgeTime();
         
         renderTab();
       } catch (error) {
@@ -145,6 +143,13 @@
       }
     }
 
+    function updateBadgeTime() {
+      if (!rawData) return;
+      const time = currentActiveTab === "thisWeek" ? rawData.thisWeekUpdated : rawData.lastWeekUpdated;
+      const badge = document.getElementById("updateBadge");
+      badge.innerHTML = time ? `<i class="fas fa-clock"></i> Cập nhật: ${time}` : "";
+    }
+
     function switchTab(tab) {
       if (currentActiveTab === tab) return;
       currentActiveTab = tab;
@@ -153,6 +158,7 @@
       document.getElementById("tabThisWeek").classList.toggle("active", tab === 'thisWeek');
       document.getElementById("tabLastWeek").classList.toggle("active", tab === 'lastWeek');
       
+      updateBadgeTime();
       renderTab();
     }
 
