@@ -219,6 +219,7 @@ header {
 .search-container {
   position: relative;
   margin-bottom: 25px;
+  max-width: 380px;
 }
 
 .search-input {
@@ -262,9 +263,11 @@ header {
 }
 
 .week-label {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .update-badge {
