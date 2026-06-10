@@ -251,15 +251,15 @@ header {
 
 /* week label / range */
 .week-info-card {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  padding: 15px 20px;
-  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(123, 44, 191, 0.08), rgba(224, 44, 152, 0.06));
+  border: 1px solid rgba(123, 44, 191, 0.2);
+  padding: 10px 16px;
+  border-radius: 12px;
   margin-bottom: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.04);
+  gap: 20px;
 }
 
 .week-label {
