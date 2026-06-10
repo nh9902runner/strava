@@ -147,7 +147,7 @@
       if (!rawData) return;
       const time = currentActiveTab === "thisWeek" ? rawData.thisWeekUpdated : rawData.lastWeekUpdated;
       const badge = document.getElementById("updateBadge");
-      badge.innerHTML = time ? `<i class="fas fa-hourglass-half"></i> ${time}` : "";
+      badge.innerHTML = time ? `<i class="fas fa-hourglass-half"></i> Cập nhật: ${time}` : "";
     }
 
     function switchTab(tab) {
