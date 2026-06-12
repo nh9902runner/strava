@@ -526,12 +526,16 @@ header {
     font-size: 24px;
   }
   
+  .leaderboard-list {
+    gap: 5px;
+  }
+  
   .runner-card {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 14px;
-    gap: 12px;
+    padding: 6px 12px;
+    gap: 8px;
   }
   
   .runner-rank-info {
@@ -542,7 +546,7 @@ header {
   .runner-meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 3px;
     width: 100%;
   }
 
