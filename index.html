@@ -70,8 +70,8 @@
       </button>
     </div>
 
-    <!-- Main Leaderboard list -->
-    <div class="leaderboard-list" id="leaderboardList">
+    <!-- Main Leaderboard Table Container -->
+    <div class="table-container" id="leaderboardTableContainer">
       <!-- Generated dynamically by Javascript -->
     </div>
   </div>
@@ -159,8 +159,8 @@
     function renderTab() {
       if (!rawData) return;
       
-      const listContainer = document.getElementById("leaderboardList");
-      listContainer.innerHTML = "";
+      const tableContainer = document.getElementById("leaderboardTableContainer");
+      tableContainer.innerHTML = "";
       
       const listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       const weekHeader = currentActiveTab === "thisWeek" ? rawData.thisWeekHeader : rawData.lastWeekHeader;
@@ -169,7 +169,7 @@
       document.getElementById("weekHeaderLabel").textContent = weekHeader || "Bảng xếp hạng";
       
       if (!listData || listData.length === 0) {
-        listContainer.innerHTML = `
+        tableContainer.innerHTML = `
           <div class="state-container">
             <i class="fas fa-running" style="font-size: 40px; color: var(--text-muted); margin-bottom: 10px;"></i>
             <p style="color: var(--text-secondary);">Chưa có dữ liệu vận động viên cho tuần này.</p>
@@ -183,7 +183,7 @@
     function filterLeaderboard() {
       if (!rawData) return;
       
-      const listContainer = document.getElementById("leaderboardList");
+      const tableContainer = document.getElementById("leaderboardTableContainer");
       let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       
       // Sắp xếp: có đăng ký (regKm > 0) lên trên, không đăng ký xuống dưới; mỗi nhóm theo tên A-Z
@@ -194,83 +194,91 @@
         return a.name.localeCompare(b.name, 'vi');
       });
       
-      listContainer.innerHTML = "";
+      // Lọc các runner thực tế có chạy (actKm > 0)
+      const renderedRunners = listData.filter(runner => runner.actKm > 0);
       
-      let renderedCount = 0;
+      if (renderedRunners.length === 0) {
+        tableContainer.innerHTML = `
+          <div class="state-container">
+            <i class="fas fa-search" style="font-size: 30px; color: var(--text-muted); margin-bottom: 10px;"></i>
+            <p style="color: var(--text-secondary);">Không tìm thấy runner nào có hoạt động.</p>
+          </div>`;
+        return;
+      }
+
+      const currentYear = new Date().getFullYear();
+      const weekHeader = currentActiveTab === "thisWeek" ? rawData.thisWeekHeader : rawData.lastWeekHeader;
       
-      listData.forEach((runner, index) => {
-        // LỌC: Chỉ hiển thị những người thực tế có chạy (actKm > 0)
-        if (runner.actKm <= 0) {
-          return;
-        }
+      // Helper function to format KM values exactly like in Google Sheet (with comma separator)
+      const formatKm = (val) => {
+        if (val === null || val === undefined || val === 0) return "";
+        return val % 1 === 0 ? val.toString() : val.toFixed(1).replace('.', ',');
+      };
+
+      let tableHtml = `
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th rowspan="2" colspan="2" class="header-strava">Strava</th>
+              <th colspan="2" class="header-week">${weekHeader || "Bảng xếp hạng"}</th>
+            </tr>
+            <tr>
+              <th class="subheader-reg">Đăng ký<br><span class="unit">(km)</span></th>
+              <th class="subheader-act">thực tế<br><span class="unit">(km)</span> <span class="filter-icon"><i class="fas fa-filter"></i></span></th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      renderedRunners.forEach((runner, index) => {
+        const isFirst = index === 0;
+        let rowClass = "row-no-goal";
         
-        renderedCount++;
-        const rank = renderedCount;
-        
-        // Tính toán thanh tiến trình (% hoàn thành) - Chỉ hiện khi đăng ký chỉ tiêu (regKm > 0)
-        let progressHtml = "";
         if (runner.regKm > 0) {
-          const progressPct = Math.min(100, Math.round((runner.actKm / runner.regKm) * 100));
-          const progressClass = progressPct >= 100 ? "success" : "partial";
-          progressHtml = `
-            <div class="goal-progress-container">
-              <div class="progress-track">
-                <div class="progress-fill ${progressClass}" style="width: ${progressPct}%"></div>
-              </div>
-              <span class="progress-percentage">${progressPct}%</span>
-            </div>
-          `;
+          if (runner.actKm >= runner.regKm) {
+            rowClass = "row-goal-met";
+          } else {
+            rowClass = "row-goal-failed";
+          }
         }
         
         // Hiển thị ghi chú phạt nuôi heo ở tuần trước
         let fineHtml = "";
         if (currentActiveTab === "lastWeek" && runner.note) {
           let noteText = runner.note;
-          // Nếu note chỉ chứa số (VD: 20000), thêm dấu chấm phân cách hàng nghìn
           if (/^\d+$/.test(noteText)) {
             noteText = Number(noteText).toLocaleString('vi-VN');
           }
-          // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
           if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
             noteText += " VNĐ";
           } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
             noteText = noteText.replace(/d|đ$/i, " VNĐ");
           }
-          fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
+          fineHtml = `<span class="table-fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
         }
-        
-        const card = document.createElement("div");
-        card.className = `runner-card rank-normal`;
-        card.innerHTML = `
-          <div class="runner-rank-info">
 
-            <div class="runner-meta">
-              <span class="runner-name">${runner.name}</span>
-              ${progressHtml}
-            </div>
-          </div>
-          ${fineHtml}
-          <div class="runner-stats" style="display: flex; align-items: center; gap: 50px; text-align: right;">
-            <div class="stat-group" style="text-align: left;">
-              <span class="stat-label">Đăng ký</span>
-              <span class="stat-value reg-val">${runner.regKm} <span style="font-size: 10px;">km</span></span>
-            </div>
-            <div class="stat-group" style="text-align: right;">
-              <span class="stat-label">Thực tế</span>
-              <span class="stat-value highlight">${runner.actKm.toFixed(1)} <span style="font-size: 11px; font-weight: normal;">km</span></span>
-            </div>
-          </div>
+        tableHtml += `
+          <tr class="${rowClass}">
+            ${isFirst ? `
+            <td rowspan="${renderedRunners.length}" class="sidebar-cell">
+              <div class="sidebar-vertical-text">NH9902 RUNNER ${currentYear}</div>
+            </td>` : ""}
+            <td class="runner-name-cell">
+              <span class="runner-name-text">${runner.name}</span>
+              ${fineHtml}
+            </td>
+            <td class="runner-reg-cell">${formatKm(runner.regKm)}</td>
+            <td class="runner-act-cell">${formatKm(runner.actKm)}</td>
+          </tr>
         `;
-        listContainer.appendChild(card);
       });
-      
-      if (renderedCount === 0) {
-        listContainer.innerHTML = `
-          <div class="state-container">
-            <i class="fas fa-search" style="font-size: 30px; color: var(--text-muted); margin-bottom: 10px;"></i>
-            <p style="color: var(--text-secondary);">Không tìm thấy runner nào khớp với từ khóa.</p>
-          </div>`;
-      }
+
+      tableHtml += `
+          </tbody>
+        </table>
+      `;
+
+      tableContainer.innerHTML = tableHtml;
     }
   </script>
 </body>
