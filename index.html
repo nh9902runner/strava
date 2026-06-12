@@ -148,6 +148,7 @@
       if (currentActiveTab === tab) return;
       currentActiveTab = tab;
       
+      // Update UI active states
       document.getElementById("tabThisWeek").classList.toggle("active", tab === 'thisWeek');
       document.getElementById("tabLastWeek").classList.toggle("active", tab === 'lastWeek');
       
@@ -164,6 +165,7 @@
       const listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       const weekHeader = currentActiveTab === "thisWeek" ? rawData.thisWeekHeader : rawData.lastWeekHeader;
       
+      // Update week label header
       document.getElementById("weekHeaderLabel").textContent = weekHeader || "Bảng xếp hạng";
       
       if (!listData || listData.length === 0) {
@@ -184,6 +186,7 @@
       const listContainer = document.getElementById("leaderboardList");
       let listData = currentActiveTab === "thisWeek" ? rawData.thisWeek : rawData.lastWeek;
       
+      // Sắp xếp: có đăng ký (regKm > 0) lên trên, không đăng ký xuống dưới; mỗi nhóm theo tên A-Z
       listData = [...listData].sort((a, b) => {
         const aReg = a.regKm > 0 ? 0 : 1;
         const bReg = b.regKm > 0 ? 0 : 1;
@@ -192,14 +195,19 @@
       });
       
       listContainer.innerHTML = "";
+      
       let renderedCount = 0;
       
-      listData.forEach((runner) => {
-        if (runner.actKm <= 0) return;
+      listData.forEach((runner, index) => {
+        // LỌC: Chỉ hiển thị những người thực tế có chạy (actKm > 0)
+        if (runner.actKm <= 0) {
+          return;
+        }
         
         renderedCount++;
         const rank = renderedCount;
         
+        // Tính toán thanh tiến trình (% hoàn thành) - Chỉ hiện khi đăng ký chỉ tiêu (regKm > 0)
         let progressHtml = "";
         if (runner.regKm > 0) {
           const progressPct = Math.min(100, Math.round((runner.actKm / runner.regKm) * 100));
@@ -214,12 +222,15 @@
           `;
         }
         
+        // Hiển thị ghi chú phạt nuôi heo ở tuần trước
         let fineHtml = "";
         if (currentActiveTab === "lastWeek" && runner.note) {
           let noteText = runner.note;
+          // Nếu note chỉ chứa số (VD: 20000), thêm dấu chấm phân cách hàng nghìn
           if (/^\d+$/.test(noteText)) {
             noteText = Number(noteText).toLocaleString('vi-VN');
           }
+          // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
           if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
             noteText += " VNĐ";
           } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
@@ -228,38 +239,25 @@
           fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
         }
         
-        const isGoalMet = runner.regKm > 0 && runner.actKm >= runner.regKm;
-        const isGoalFailed = runner.regKm > 0 && runner.actKm < runner.regKm;
-        
-        let statusClass = "status-no-goal";
-        if (isGoalMet) statusClass = "status-goal-met";
-        else if (isGoalFailed) statusClass = "status-goal-failed";
-
         const card = document.createElement("div");
-        card.className = `runner-card rank-${rank <= 3 ? rank : 'normal'} ${statusClass}`;
-        
-        const formatKm = val => {
-          if (val === null || val === undefined || val === 0) return "0";
-          return val % 1 === 0 ? val.toString() : val.toFixed(1).replace('.', ',');
-        };
-
+        card.className = `runner-card rank-normal`;
         card.innerHTML = `
-          <div class="rank-badge">${rank}</div>
-          <div class="runner-main-info">
-            <div class="runner-name-row">
+          <div class="runner-rank-info">
+
+            <div class="runner-meta">
               <span class="runner-name">${runner.name}</span>
-              ${fineHtml}
+              ${progressHtml}
             </div>
-            ${progressHtml}
           </div>
-          <div class="runner-stats-group">
-            <div class="stat-item reg">
-              <span class="stat-lbl">Đăng ký</span>
-              <span class="stat-num">${runner.regKm > 0 ? runner.regKm : '-'} <span class="unit">km</span></span>
+          ${fineHtml}
+          <div class="runner-stats" style="display: flex; align-items: center; gap: 50px; text-align: right;">
+            <div class="stat-group" style="text-align: left;">
+              <span class="stat-label">Đăng ký</span>
+              <span class="stat-value reg-val">${runner.regKm} <span style="font-size: 10px;">km</span></span>
             </div>
-            <div class="stat-item act">
-              <span class="stat-lbl">Thực tế</span>
-              <span class="stat-num highlight">${formatKm(runner.actKm)} <span class="unit">km</span></span>
+            <div class="stat-group" style="text-align: right;">
+              <span class="stat-label">Thực tế</span>
+              <span class="stat-value highlight">${runner.actKm.toFixed(1)} <span style="font-size: 11px; font-weight: normal;">km</span></span>
             </div>
           </div>
         `;

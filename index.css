@@ -1,21 +1,22 @@
-/* design system & colors variables - PREMIUM LIGHT THEME */
+/* design system & colors variables - LIGHT THEME */
 :root {
-  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  --bg-gradient: linear-gradient(135deg, #f7f9fc 0%, #e9edf5 100%);
   --panel-bg: #ffffff;
-  --panel-border: rgba(15, 23, 42, 0.05);
-  --primary: #4f46e5;       /* Deep Indigo */
-  --primary-light: #818cf8; /* Light Indigo */
-  --secondary: #f43f5e;     /* Rose Pink */
-  --success: #10b981;       /* Emerald Green */
-  --warning: #f59e0b;       /* Amber Gold */
-  --text-primary: #0f172a;   /* Deep Slate */
-  --text-secondary: #475569; /* Slate Gray */
-  --text-muted: #94a3b8;     /* Light Slate */
+  --panel-border: rgba(123, 44, 191, 0.08);
+  --primary: #7b2cbf;
+  --primary-light: #9d4edd;
+  --secondary: #e02c98;
+  --accent-gold: #ffd700;
+  --accent-silver: #c0c0c0;
+  --accent-bronze: #cd7f32;
+  --strava-orange: #fc4c02;
+  --text-primary: #1e1b29;
+  --text-secondary: #5c5770;
+  --text-muted: #928baf;
+  --success: #00b050;
+  --warning: #ffb300;
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.02);
-  --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 20px 40px rgba(79, 70, 229, 0.06);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* global reset */
@@ -38,36 +39,36 @@ body {
 /* decorative background glow effects */
 .bg-glow-1 {
   position: fixed;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
-  top: -150px;
-  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(123, 44, 191, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -100px;
+  right: -50px;
   z-index: -1;
   pointer-events: none;
 }
 
 .bg-glow-2 {
   position: fixed;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(244, 63, 94, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
-  bottom: 5%;
-  left: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(224, 44, 152, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  bottom: 10%;
+  left: -150px;
   z-index: -1;
   pointer-events: none;
 }
 
 /* container styling */
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
 /* Header layout */
 header {
-  padding: 50px 0 30px 0;
+  padding: 40px 0 20px 0;
   text-align: center;
   position: relative;
 }
@@ -76,99 +77,121 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 8px;
+  gap: 18px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
 .logo-img {
-  width: 55px;
-  height: 55px;
-  border-radius: 16px;
-  border: 2px solid #ffffff;
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.12);
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 15px rgba(123, 44, 191, 0.15);
   object-fit: cover;
 }
 
 .club-title {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 900;
-  background: linear-gradient(to right, var(--primary), var(--secondary));
+  background: linear-gradient(to right, #1a237e, #e02c98, #7b2cbf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
 
 .club-subtitle {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
-  letter-spacing: 3px;
-  margin-top: 6px;
+  letter-spacing: 2px;
+  margin-top: 5px;
   text-transform: uppercase;
-  font-weight: 600;
 }
 
-/* config box */
+/* links to strava */
+.strava-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--strava-orange);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(252, 76, 2, 0.3);
+  transition: var(--transition);
+}
+
+.strava-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(252, 76, 2, 0.4);
+}
+
+/* app settings state or load notifications */
+.config-warning {
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid var(--warning);
+  color: var(--warning);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 14px;
+}
+
 .config-input-box {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  padding: 24px;
-  border-radius: 20px;
-  margin-bottom: 30px;
-  box-shadow: var(--shadow-md);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .config-input-box h3 {
-  font-size: 17px;
-  margin-bottom: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
   color: var(--text-primary);
-  font-weight: 700;
 }
 
 .config-input-box input {
   width: 100%;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 12px;
+  padding: 10px 15px;
+  background: #f1f3f9;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
   color: var(--text-primary);
   font-size: 14px;
-  margin-bottom: 12px;
-  outline: none;
-  transition: var(--transition);
-}
-
-.config-input-box input:focus {
-  border-color: var(--primary-light);
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  margin-bottom: 10px;
 }
 
 .config-input-box button {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   border: none;
   color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
   transition: var(--transition);
 }
 
 .config-input-box button:hover {
-  background: #4338ca;
+  opacity: 0.9;
   transform: translateY(-1px);
 }
 
 /* tabs selector component */
 .tabs-container {
   display: flex;
-  background: rgba(79, 70, 229, 0.04);
+  background: rgba(123, 44, 191, 0.05);
   padding: 6px;
-  border-radius: 20px;
-  border: 1px solid rgba(79, 70, 229, 0.06);
+  border-radius: 30px;
+  border: 1px solid var(--panel-border);
   margin-bottom: 25px;
 }
 
@@ -178,55 +201,82 @@ header {
   border: none;
   color: var(--text-secondary);
   padding: 12px 20px;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
   outline: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
 
 .tab-btn.active {
-  background: #ffffff;
-  color: var(--primary);
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.08);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.25);
 }
 
-/* week label / range card */
-.week-info-card {
+/* filter & search section */
+.search-container {
+  position: relative;
+  margin-bottom: 25px;
+  max-width: 380px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 20px 15px 50px;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  padding: 12px 20px;
   border-radius: 16px;
+  color: var(--text-primary);
+  font-size: 16px;
+  outline: none;
+  transition: var(--transition);
+  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.04);
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 4px 25px rgba(123, 44, 191, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+/* week label / range */
+.week-info-card {
+  background: linear-gradient(135deg, rgba(123, 44, 191, 0.08), rgba(224, 44, 152, 0.06));
+  border: 1px solid rgba(123, 44, 191, 0.2);
+  padding: 10px 16px;
+  border-radius: 12px;
   margin-bottom: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: var(--shadow-sm);
+  gap: 20px;
 }
 
 .week-label {
   font-size: 13px;
-  font-weight: 700;
-  color: var(--text-secondary);
+  font-weight: 600;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .update-badge {
-  font-size: 11px;
-  background: rgba(79, 70, 229, 0.05);
+  font-size: 12px;
+  background: rgba(123, 44, 191, 0.08);
   color: var(--primary);
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 44, 191, 0.15);
 }
 
 /* loading / states view */
@@ -235,22 +285,18 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 0;
+  padding: 80px 0;
   text-align: center;
-  background: var(--panel-bg);
-  border-radius: 24px;
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--shadow-md);
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(79, 70, 229, 0.08);
-  border-top-color: var(--primary);
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(123, 44, 191, 0.1);
+  border-top-color: var(--secondary);
   border-radius: 50%;
-  animation: spin 0.8s infinite linear;
-  margin-bottom: 16px;
+  animation: spin 1s infinite linear;
+  margin-bottom: 20px;
 }
 
 @keyframes spin {
@@ -258,48 +304,64 @@ header {
   100% { transform: rotate(360deg); }
 }
 
+.error-text {
+  color: #ff3d71;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
 /* leaderboard card / rows */
 .leaderboard-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
 }
 
 .runner-card {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  padding: 12px 20px;
+  padding: 10px 16px;
   border-radius: 16px;
   display: flex;
   align-items: center;
-  gap: 15px;
-  position: relative;
+  justify-content: space-between;
   transition: var(--transition);
-  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.04);
+}
+
+.runner-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background: transparent;
+  transition: var(--transition);
 }
 
 .runner-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(79, 70, 229, 0.15);
+  transform: translateX(4px);
+  background: #ffffff;
+  border-color: rgba(123, 44, 191, 0.2);
+  box-shadow: 0 10px 30px rgba(123, 44, 191, 0.08);
 }
 
-/* Left vertical border colors based on status */
-.runner-card.status-goal-met {
-  border-left: 4px solid var(--success);
+.runner-card:hover::after {
+  background: linear-gradient(to bottom, var(--primary), var(--secondary));
 }
 
-.runner-card.status-goal-failed {
-  border-left: 4px solid var(--warning);
+.runner-rank-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
 }
 
-.runner-card.status-no-goal {
-  border-left: 4px solid #cbd5e1;
-}
-
-/* Rank Badge Styles */
-.rank-badge {
-  font-size: 14px;
+.rank-number {
+  font-size: 16px;
   font-weight: 800;
   width: 28px;
   height: 28px;
@@ -307,63 +369,41 @@ header {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #f1f5f9;
-  color: var(--text-secondary);
-  flex-shrink: 0;
+  background: rgba(123, 44, 191, 0.08);
+  color: var(--primary);
 }
 
-.rank-1 .rank-badge {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #b45309;
-  font-weight: 900;
+/* top 3 medal styles */
+.rank-1 .rank-number {
+  background: var(--accent-gold);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
 }
 
-.rank-2 .rank-badge {
-  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-  color: #475569;
+.rank-2 .rank-number {
+  background: var(--accent-silver);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(192, 192, 192, 0.4);
 }
 
-.rank-3 .rank-badge {
-  background: linear-gradient(135deg, #ffedd5, #fed7aa);
-  color: #c2410c;
+.rank-3 .rank-number {
+  background: var(--accent-bronze);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(205, 127, 50, 0.4);
 }
 
-/* Main info layout */
-.runner-main-info {
+.runner-meta {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.runner-name-row {
-  display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .runner-name {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* fine / note badge */
-.fine-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 20px;
-  background: rgba(244, 63, 94, 0.05);
-  border: 1px solid rgba(244, 63, 94, 0.12);
-  color: var(--secondary);
 }
 
 /* progress goal bar design */
@@ -371,82 +411,105 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 6px;
 }
 
 .progress-track {
   width: 120px;
-  height: 5px;
-  background: #e2e8f0;
-  border-radius: 10px;
+  height: 6px;
+  background: rgba(123, 44, 191, 0.1);
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  border-radius: 10px;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
+  transition: width 0.6s ease-out;
 }
 
+/* dynamic colors based on status */
 .progress-fill.success {
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(to right, #00b050, #00b0ff);
+  box-shadow: 0 0 8px rgba(0, 176, 80, 0.3);
 }
 
 .progress-fill.partial {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  background: linear-gradient(to right, #ffb300, #ff8000);
+  box-shadow: 0 0 8px rgba(255, 179, 0, 0.3);
+}
+
+.progress-fill.none {
+  background: #c3c0d0;
 }
 
 .progress-percentage {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
-/* stats section styling */
-.runner-stats-group {
+/* stats section */
+.runner-stats {
   display: flex;
   align-items: center;
-  gap: 30px;
-  flex-shrink: 0;
+  gap: 50px;
+  text-align: right;
 }
 
-.stat-item {
+.stat-group {
   display: flex;
   flex-direction: column;
 }
 
-.stat-item.reg {
-  text-align: left;
-}
-
-.stat-item.act {
-  text-align: right;
-}
-
-.stat-lbl {
-  font-size: 9px;
+.stat-label {
+  font-size: 10px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 2px;
-  font-weight: 600;
 }
 
-.stat-num {
-  font-size: 14px;
+.stat-value {
+  font-size: 15px;
   font-weight: 800;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
-.stat-num.highlight {
+.stat-value.highlight {
   color: var(--primary);
-  font-size: 17px;
 }
 
-.unit {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-muted);
+.stat-value.goal-met {
+  color: var(--success);
+}
+
+.stat-value.reg-val {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* fine / note tag */
+.fine-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
+  background: rgba(255, 61, 113, 0.1);
+  border: 1px solid rgba(255, 61, 113, 0.2);
+  color: #ff3d71;
+}
+
+.no-fine-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
+  background: rgba(0, 176, 80, 0.1);
+  border: 1px solid rgba(0, 176, 80, 0.2);
+  color: var(--success);
 }
 
 /* responsive adaptions */
@@ -462,59 +525,23 @@ header {
   .club-title {
     font-size: 24px;
   }
-
-  .leaderboard-list {
-    gap: 8px;
-  }
   
   .runner-card {
-    padding: 10px 14px;
-    gap: 12px;
-  }
-
-  .rank-badge {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }
-
-  .runner-name {
-    font-size: 14px;
-    max-width: 140px;
-  }
-
-  .fine-badge {
-    font-size: 9px;
-    padding: 1px 6px;
-  }
-
-  .goal-progress-container {
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .progress-track {
-    width: 60px;
-    height: 4px;
-  }
-
-  .progress-percentage {
-    font-size: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
   }
   
-  .runner-stats-group {
-    gap: 15px;
+  .runner-stats {
+    width: 100%;
+    justify-content: space-between;
+    text-align: left;
+    border-top: 1px solid var(--panel-border);
+    padding-top: 12px;
   }
-
-  .stat-lbl {
-    display: none; /* Hide labels on mobile to prevent wrapping and save vertical space */
-  }
-
-  .stat-num {
-    font-size: 12px;
-  }
-
-  .stat-num.highlight {
-    font-size: 14px;
+  
+  .progress-track {
+    width: 90px;
   }
 }
