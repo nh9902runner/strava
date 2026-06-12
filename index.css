@@ -61,7 +61,7 @@ body {
 
 /* container styling */
 .container {
-  max-width: 900px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -414,7 +414,7 @@ header {
 }
 
 .progress-track {
-  width: 220px;
+  width: 180px;
   height: 7px;
   background: rgba(123, 44, 191, 0.1);
   border-radius: 4px;
