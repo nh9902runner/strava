@@ -310,155 +310,206 @@ header {
   margin-top: 10px;
 }
 
-/* leaderboard table container & grid */
-.table-container {
-  width: 100%;
-  overflow-x: auto;
+/* leaderboard card / rows */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.runner-card {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
+  padding: 10px 16px;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(123, 44, 191, 0.04);
-  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.04);
 }
 
-.leaderboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-  text-align: left;
-  min-width: 500px;
+.runner-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background: transparent;
+  transition: var(--transition);
 }
 
-/* table borders */
-.leaderboard-table th, 
-.leaderboard-table td {
-  border: 1px solid rgba(123, 44, 191, 0.1);
-  padding: 12px 18px;
-  vertical-align: middle;
+.runner-card:hover {
+  transform: translateX(4px);
+  background: #ffffff;
+  border-color: rgba(123, 44, 191, 0.2);
+  box-shadow: 0 10px 30px rgba(123, 44, 191, 0.08);
 }
 
-/* header styles resembling google sheets */
-.leaderboard-table thead th {
-  background: linear-gradient(135deg, rgba(123, 44, 191, 0.08) 0%, rgba(224, 44, 152, 0.04) 100%);
-  color: var(--text-primary);
-  font-weight: 700;
-  text-align: center;
+.runner-card:hover::after {
+  background: linear-gradient(to bottom, var(--primary), var(--secondary));
 }
 
-.leaderboard-table th.header-strava {
+.runner-rank-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.rank-number {
   font-size: 16px;
   font-weight: 800;
-  background: linear-gradient(135deg, rgba(123, 44, 191, 0.15) 0%, rgba(224, 44, 152, 0.08) 100%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(123, 44, 191, 0.08);
   color: var(--primary);
+}
+
+/* top 3 medal styles */
+.rank-1 .rank-number {
+  background: var(--accent-gold);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.rank-2 .rank-number {
+  background: var(--accent-silver);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(192, 192, 192, 0.4);
+}
+
+.rank-3 .rank-number {
+  background: var(--accent-bronze);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(205, 127, 50, 0.4);
+}
+
+.runner-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.runner-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* progress goal bar design */
+.goal-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-track {
+  width: 120px;
+  height: 6px;
+  background: rgba(123, 44, 191, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease-out;
+}
+
+/* dynamic colors based on status */
+.progress-fill.success {
+  background: linear-gradient(to right, #00b050, #00b0ff);
+  box-shadow: 0 0 8px rgba(0, 176, 80, 0.3);
+}
+
+.progress-fill.partial {
+  background: linear-gradient(to right, #ffb300, #ff8000);
+  box-shadow: 0 0 8px rgba(255, 179, 0, 0.3);
+}
+
+.progress-fill.none {
+  background: #c3c0d0;
+}
+
+.progress-percentage {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* stats section */
+.runner-stats {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  text-align: right;
+}
+
+.stat-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.leaderboard-table th.header-week {
+.stat-value {
   font-size: 15px;
-  font-weight: 700;
-  background: linear-gradient(135deg, rgba(123, 44, 191, 0.12) 0%, rgba(224, 44, 152, 0.06) 100%);
-  color: var(--text-primary);
-}
-
-.leaderboard-table th.subheader-reg,
-.leaderboard-table th.subheader-act {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  padding: 8px 10px;
-}
-
-.leaderboard-table th .unit {
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-.leaderboard-table th .filter-icon {
-  color: var(--success);
-  margin-left: 4px;
-  font-size: 11px;
-  background: rgba(0, 176, 80, 0.1);
-  padding: 2px 4px;
-  border-radius: 3px;
-  display: inline-flex;
-  align-items: center;
-}
-
-
-
-/* row level coloring based on completion */
-.leaderboard-table tbody tr.row-no-goal {
-  background-color: #ffffff;
-}
-
-.leaderboard-table tbody tr.row-goal-failed {
-  background-color: rgba(255, 179, 0, 0.12); /* warning theme soft yellow */
-}
-
-.leaderboard-table tbody tr.row-goal-met {
-  background-color: rgba(0, 176, 80, 0.08); /* success theme soft green */
-}
-
-/* row hovers and micro-animations */
-.leaderboard-table tbody tr {
-  transition: var(--transition);
-}
-
-.leaderboard-table tbody tr:hover {
-  filter: brightness(0.97);
-}
-
-/* runner details cells */
-.leaderboard-table td.runner-name-cell {
-  text-align: left;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.runner-name-text {
-  font-size: 15px;
-}
-
-.leaderboard-table td.runner-reg-cell {
-  text-align: center;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.leaderboard-table td.runner-act-cell {
-  text-align: right;
   font-weight: 800;
-}
-
-/* text color highlighting for actual value */
-.row-goal-met .runner-act-cell {
-  color: var(--success);
-}
-
-.row-goal-failed .runner-act-cell {
-  color: var(--secondary);
-}
-
-.row-no-goal .runner-act-cell {
   color: var(--text-primary);
 }
 
-/* fine / note badge */
-.table-fine-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.stat-value.highlight {
+  color: var(--primary);
+}
+
+.stat-value.goal-met {
+  color: var(--success);
+}
+
+.stat-value.reg-val {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* fine / note tag */
+.fine-badge {
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
   background: rgba(255, 61, 113, 0.1);
   border: 1px solid rgba(255, 61, 113, 0.2);
   color: #ff3d71;
-  margin-left: 10px;
-  vertical-align: middle;
+}
+
+.no-fine-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-top: 4px;
+  display: inline-block;
+  background: rgba(0, 176, 80, 0.1);
+  border: 1px solid rgba(0, 176, 80, 0.2);
+  color: var(--success);
 }
 
 /* responsive adaptions */
@@ -474,18 +525,23 @@ header {
   .club-title {
     font-size: 24px;
   }
-
-  .table-container {
-    border-radius: 12px;
+  
+  .runner-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
   }
-
-  .leaderboard-table {
-    font-size: 13px;
+  
+  .runner-stats {
+    width: 100%;
+    justify-content: space-between;
+    text-align: left;
+    border-top: 1px solid var(--panel-border);
+    padding-top: 12px;
   }
-
-  .leaderboard-table th, 
-  .leaderboard-table td {
-    padding: 10px 12px;
+  
+  .progress-track {
+    width: 90px;
   }
-  }
-
+}
