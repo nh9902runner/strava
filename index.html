@@ -219,7 +219,7 @@
         <table class="leaderboard-table">
           <thead>
             <tr>
-              <th rowspan="2" colspan="2" class="header-strava">Strava</th>
+              <th rowspan="2" class="header-strava">Strava</th>
               <th colspan="2" class="header-week">${weekHeader || "Bảng xếp hạng"}</th>
             </tr>
             <tr>
@@ -231,7 +231,6 @@
       `;
 
       renderedRunners.forEach((runner, index) => {
-        const isFirst = index === 0;
         let rowClass = "row-no-goal";
         
         if (runner.regKm > 0) {
@@ -259,10 +258,6 @@
 
         tableHtml += `
           <tr class="${rowClass}">
-            ${isFirst ? `
-            <td rowspan="${renderedRunners.length}" class="sidebar-cell">
-              <div class="sidebar-vertical-text">NH9902 RUNNER ${currentYear}</div>
-            </td>` : ""}
             <td class="runner-name-cell">
               <span class="runner-name-text">${runner.name}</span>
               ${fineHtml}

@@ -386,26 +386,7 @@ header {
   align-items: center;
 }
 
-/* sidebar vertical header cell */
-.leaderboard-table td.sidebar-cell {
-  background: linear-gradient(to bottom, var(--primary), var(--secondary));
-  color: #ffffff;
-  font-weight: 900;
-  font-size: 13px;
-  text-align: center;
-  width: 40px;
-  padding: 15px 4px;
-  letter-spacing: 1.5px;
-  border: 1px solid rgba(123, 44, 191, 0.2);
-}
 
-.sidebar-vertical-text {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  white-space: nowrap;
-  display: inline-block;
-  margin: 0 auto;
-}
 
 /* row level coloring based on completion */
 .leaderboard-table tbody tr.row-no-goal {
@@ -506,10 +487,5 @@ header {
   .leaderboard-table td {
     padding: 10px 12px;
   }
-
-  .leaderboard-table td.sidebar-cell {
-    width: 32px;
-    font-size: 11px;
   }
-}
 
