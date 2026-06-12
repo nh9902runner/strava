@@ -243,14 +243,13 @@
         card.className = `runner-card rank-normal`;
         card.innerHTML = `
           <div class="runner-rank-info">
+
             <div class="runner-meta">
-              <div class="runner-name-container" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <span class="runner-name">${runner.name}</span>
-                ${fineHtml}
-              </div>
+              <span class="runner-name">${runner.name}</span>
               ${progressHtml}
             </div>
           </div>
+          ${fineHtml}
           <div class="runner-stats" style="display: flex; align-items: center; gap: 50px; text-align: right;">
             <div class="stat-group" style="text-align: left;">
               <span class="stat-label">Đăng ký</span>
