@@ -534,8 +534,8 @@ header {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 12px;
-    gap: 8px;
+    padding: 3px 12px;
+    gap: 6px;
   }
   
   .runner-rank-info {
@@ -546,12 +546,12 @@ header {
   .runner-meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 3px;
+    gap: 2px;
     width: 100%;
   }
 
   .runner-name {
-    font-size: 15px;
+    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -565,7 +565,7 @@ header {
   
   .progress-track {
     width: 60px;
-    height: 5px;
+    height: 4px;
   }
 
   .progress-percentage {
