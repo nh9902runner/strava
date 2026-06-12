@@ -61,14 +61,14 @@ body {
 
 /* container styling */
 .container {
-  max-width: 750px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
 /* Header layout */
 header {
-  padding: 20px 0 10px 0;
+  padding: 40px 0 20px 0;
   text-align: center;
   position: relative;
 }
@@ -77,35 +77,35 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 6px;
+  gap: 18px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
 .logo-img {
-  width: 46px;
-  height: 46px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 4px 10px rgba(123, 44, 191, 0.12);
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 15px rgba(123, 44, 191, 0.15);
   object-fit: cover;
 }
 
 .club-title {
-  font-size: 26px;
+  font-size: 34px;
   font-weight: 900;
   background: linear-gradient(to right, #1a237e, #e02c98, #7b2cbf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
 
 .club-subtitle {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--text-secondary);
   letter-spacing: 2px;
-  margin-top: 2px;
+  margin-top: 5px;
   text-transform: uppercase;
 }
 
@@ -189,10 +189,10 @@ header {
 .tabs-container {
   display: flex;
   background: rgba(123, 44, 191, 0.05);
-  padding: 4px;
+  padding: 6px;
   border-radius: 30px;
   border: 1px solid var(--panel-border);
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 .tab-btn {
@@ -200,9 +200,9 @@ header {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  padding: 8px 16px;
+  padding: 12px 20px;
   border-radius: 25px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -253,13 +253,13 @@ header {
 .week-info-card {
   background: linear-gradient(135deg, rgba(123, 44, 191, 0.08), rgba(224, 44, 152, 0.06));
   border: 1px solid rgba(123, 44, 191, 0.2);
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-radius: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
+  gap: 20px;
 }
 
 .week-label {
@@ -396,12 +396,12 @@ header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
   flex-wrap: nowrap;
 }
 
 .runner-name {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -414,10 +414,10 @@ header {
 }
 
 .progress-track {
-  width: 180px;
-  height: 7px;
+  width: 120px;
+  height: 6px;
   background: rgba(123, 44, 191, 0.1);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
@@ -469,7 +469,7 @@ header {
 }
 
 .stat-value {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--text-primary);
 }
@@ -484,7 +484,7 @@ header {
 
 .stat-value.reg-val {
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 /* fine / note tag */
@@ -519,20 +519,11 @@ header {
   }
   
   header {
-    padding: 15px 0 8px 0;
+    padding: 30px 0 15px 0;
   }
   
   .club-title {
-    font-size: 18px;
-  }
-
-  .logo-img {
-    width: 36px;
-    height: 36px;
-  }
-
-  .tabs-container {
-    margin-bottom: 12px;
+    font-size: 24px;
   }
   
   .runner-card {
