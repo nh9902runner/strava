@@ -527,21 +527,83 @@ header {
   }
   
   .runner-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 15px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    gap: 12px;
   }
   
-  .runner-stats {
+  .runner-rank-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .runner-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     width: 100%;
-    justify-content: space-between;
-    text-align: left;
-    border-top: 1px solid var(--panel-border);
-    padding-top: 12px;
+  }
+
+  .runner-name {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+
+  .goal-progress-container {
+    width: 100%;
+    gap: 6px;
   }
   
   .progress-track {
-    width: 90px;
+    width: 60px;
+    height: 5px;
+  }
+
+  .progress-percentage {
+    font-size: 10px;
+  }
+
+  .fine-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    margin-top: 0;
+  }
+  
+  .runner-stats {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    border-top: none;
+    padding-top: 0;
+    width: auto;
+    text-align: right;
+  }
+
+  .stat-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .stat-label {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .stat-value {
+    font-size: 11px;
+  }
+
+  .stat-value.highlight {
+    font-size: 14px;
+  }
+
+  .stat-value.reg-val {
+    font-size: 11px;
   }
 }
