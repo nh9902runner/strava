@@ -225,8 +225,8 @@
         // Hiển thị ghi chú phạt nuôi heo ở tuần trước
         let fineHtml = "";
         if (currentActiveTab === "lastWeek" && runner.note) {
-          let noteText = runner.note;
-          // Nếu note chỉ chứa số (VD: 20000), thêm dấu chấm phân cách hàng nghìn
+          let noteText = runner.note.toString().trim();
+          // Nếu note chỉ chứa số nguyên (VD: 32000), thêm dấu chấm phân cách hàng nghìn
           if (/^\d+$/.test(noteText)) {
             noteText = Number(noteText).toLocaleString('vi-VN');
           }
