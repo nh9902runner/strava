@@ -226,17 +226,20 @@
         let fineHtml = "";
         if (currentActiveTab === "lastWeek" && runner.note) {
           let noteText = runner.note.toString().trim();
-          // Nếu note chỉ chứa số nguyên (VD: 32000), thêm dấu chấm phân cách hàng nghìn
-          if (/^\d+$/.test(noteText)) {
-            noteText = Number(noteText).toLocaleString('vi-VN');
+          // Chỉ hiển thị badge nuôi heo nếu giá trị khác rỗng và lớn hơn 0 (bỏ qua các giá trị như "0", "0 đ", "0 VNĐ")
+          if (noteText && !/^0\s*(đ|d|vnd|vnđ)?$/i.test(noteText)) {
+            // Nếu note chỉ chứa số nguyên (VD: 32000), thêm dấu chấm phân cách hàng nghìn
+            if (/^\d+$/.test(noteText)) {
+              noteText = Number(noteText).toLocaleString('vi-VN');
+            }
+            // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
+            if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
+              noteText += " VNĐ";
+            } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
+              noteText = noteText.replace(/d|đ$/i, " VNĐ");
+            }
+            fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
           }
-          // Chuẩn hóa đuôi tiền tệ để tránh bị viết lặp VNĐ / đ
-          if (!noteText.toLowerCase().endsWith("vnđ") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("đ") && !noteText.toLowerCase().endsWith("k")) {
-            noteText += " VNĐ";
-          } else if (noteText.endsWith("đ") || noteText.toLowerCase().endsWith("d")) {
-            noteText = noteText.replace(/d|đ$/i, " VNĐ");
-          }
-          fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
         }
         
         const card = document.createElement("div");
