@@ -476,65 +476,132 @@
       
       if (!rawData || !rawData.history || rawData.history.length === 0) {
         grid.innerHTML = `
-          <div class="state-container" style="grid-column: 1/-1;">
+          <div class="state-container">
             <i class="fas fa-clock" style="font-size:40px;color:var(--text-muted);margin-bottom:10px;"></i>
-            <p style="color:var(--text-secondary);">Ch\u01b0a c\u00f3 d\u1eef li\u1ec7u l\u1ecbch s\u1eed. D\u1eef li\u1ec7u s\u1ebd xu\u1ea5t hi\u1ec7n sau khi k\u1ebft th\u00fac tu\u1ea7n \u0111\u1ea7u ti\u00ean.</p>
+            <p style="color:var(--text-secondary);">Chưa có dữ liệu lịch sử. Dữ liệu xuất hiện sau khi kết thúc tuần đầu tiên.</p>
           </div>`;
         return;
       }
       
       grid.innerHTML = "";
       
-      rawData.history.forEach((week, idx) => {
-        const isNewest = idx === rawData.history.length - 1;
-        const card = document.createElement("div");
-        card.className = "history-card" + (isNewest ? " history-card--newest" : "");
+      rawData.history.forEach((week, weekIdx) => {
+        // Section header cho từng tuần
+        const section = document.createElement("div");
+        section.className = "history-week-section";
         
-        // Runners c\u00f3 actKm > 0
-        const active = week.runners.filter(r => r.actKm > 0);
-        const missed = week.runners.filter(r => r.actKm === 0 && r.regKm > 0);
+        const sectionHeader = document.createElement("div");
+        sectionHeader.className = "history-week-header";
+        sectionHeader.innerHTML = `
+          <i class="fas fa-calendar-week"></i>
+          <span>${week.header}</span>
+          ${weekIdx === rawData.history.length - 1 ? '<span class="history-week-badge">Mới nhất</span>' : ''}
+        `;
+        section.appendChild(sectionHeader);
         
-        let rowsHtml = "";
-        active.forEach((r, i) => {
-          const pct = r.regKm > 0 ? Math.min(100, Math.round(r.actKm / r.regKm * 100)) : null;
-          const medal = i === 0 ? '\uD83E\uDD47' : i === 1 ? '\uD83E\uDD48' : i === 2 ? '\uD83E\uDD49' : `${i+1}.`;
-          const pctHtml = pct !== null
-            ? `<span class="hist-pct ${pct >= 100 ? 'hist-pct--ok' : pct >= 70 ? 'hist-pct--warn' : 'hist-pct--low'}">${pct}%</span>`
-            : '';
-          rowsHtml += `
-            <tr>
-              <td class="hist-rank">${medal}</td>
-              <td class="hist-name">${r.name}</td>
-              <td class="hist-km">${r.actKm.toFixed(1)}<span class="hist-reg"> /${r.regKm}</span></td>
-              <td>${pctHtml}</td>
-            </tr>`;
+        const runners = week.runners.filter(r => r.actKm > 0);
+        const missed  = week.runners.filter(r => r.actKm === 0 && r.regKm > 0);
+        
+        if (runners.length === 0 && missed.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "history-empty";
+          empty.textContent = "Không có dữ liệu tuần này";
+          section.appendChild(empty);
+        }
+        
+        runners.forEach((runner, i) => {
+          const progressPct = runner.regKm > 0
+            ? Math.min(100, Math.round((runner.actKm / runner.regKm) * 100))
+            : null;
+          
+          const progressHtml = progressPct !== null ? `
+            <div class="goal-progress-container">
+              <div class="progress-track">
+                <div class="progress-fill ${progressPct >= 100 ? 'success' : 'partial'}" style="width:${progressPct}%"></div>
+              </div>
+              <span class="progress-percentage">${progressPct}%</span>
+            </div>` : '';
+          
+          // Badge nuôi heo
+          let fineHtml = "";
+          if (runner.note) {
+            let noteText = runner.note.toString().trim();
+            if (noteText && !/^0\s*(\u0111|d|vnd|vn\u0111)?$/i.test(noteText)) {
+              if (/^\d+$/.test(noteText)) noteText = Number(noteText).toLocaleString('vi-VN');
+              if (!noteText.toLowerCase().endsWith("vn\u0111") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("\u0111") && !noteText.toLowerCase().endsWith("k")) {
+                noteText += " VN\u0110";
+              } else if (noteText.endsWith("\u0111") || noteText.toLowerCase().endsWith("d")) {
+                noteText = noteText.replace(/d|\u0111$/i, " VN\u0110");
+              }
+              fineHtml = `<span class="fine-badge"><i class="fas fa-piggy-bank"></i> nuôi heo ${noteText}</span>`;
+            }
+          }
+          
+          const card = document.createElement("div");
+          card.className = "runner-card rank-normal";
+          card.innerHTML = `
+            <div class="runner-rank-info">
+              <div class="runner-meta">
+                <span class="runner-name">${runner.name}</span>
+                ${progressHtml}
+              </div>
+            </div>
+            ${fineHtml}
+            <div class="runner-stats" style="display:flex;align-items:center;gap:50px;text-align:right;">
+              <div class="stat-group" style="text-align:left;">
+                <span class="stat-label">Đăng ký</span>
+                <span class="stat-value reg-val">${runner.regKm} <span style="font-size:10px;">km</span></span>
+              </div>
+              <div class="stat-group" style="text-align:right;">
+                <span class="stat-label">Thực tế</span>
+                <span class="stat-value highlight">${runner.actKm.toFixed(1)} <span style="font-size:11px;font-weight:normal;">km</span></span>
+              </div>
+            </div>`;
+          section.appendChild(card);
         });
         
-        // Ng\u01b0\u1eddi \u0111\u0103ng k\u00fd nh\u01b0ng kh\u00f4ng ch\u1ea1y
+        // Nhóm không hoàn thành
         if (missed.length > 0) {
-          rowsHtml += `<tr class="hist-missed-header"><td colspan="4">\u26a0\ufe0f Kh\u00f4ng ho\u00e0n th\u00e0nh</td></tr>`;
-          missed.forEach(r => {
-            rowsHtml += `<tr class="hist-missed"><td></td><td class="hist-name">${r.name}</td><td class="hist-km" colspan="2">0 /${r.regKm} km</td></tr>`;
+          const missedHeader = document.createElement("div");
+          missedHeader.className = "history-missed-label";
+          missedHeader.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Không hoàn thành mục tiêu`;
+          section.appendChild(missedHeader);
+          
+          missed.forEach(runner => {
+            const card = document.createElement("div");
+            card.className = "runner-card rank-normal history-missed-card";
+            card.innerHTML = `
+              <div class="runner-rank-info">
+                <div class="runner-meta">
+                  <span class="runner-name" style="color:var(--text-muted);font-weight:500;">${runner.name}</span>
+                  <div class="goal-progress-container">
+                    <div class="progress-track"><div class="progress-fill partial" style="width:0%"></div></div>
+                    <span class="progress-percentage" style="color:var(--text-muted);">0%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="runner-stats" style="display:flex;align-items:center;gap:50px;text-align:right;">
+                <div class="stat-group" style="text-align:left;">
+                  <span class="stat-label">Đăng ký</span>
+                  <span class="stat-value reg-val" style="color:var(--text-muted);">${runner.regKm} <span style="font-size:10px;">km</span></span>
+                </div>
+                <div class="stat-group" style="text-align:right;">
+                  <span class="stat-label">Thực tế</span>
+                  <span class="stat-value" style="color:var(--text-muted);">0.0 <span style="font-size:11px;">km</span></span>
+                </div>
+              </div>`;
+            section.appendChild(card);
           });
         }
         
-        if (!rowsHtml) {
-          rowsHtml = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:16px;font-style:italic;">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</td></tr>`;
+        grid.appendChild(section);
+        
+        // Phân cách giữa các tuần (trừ tuần cuối)
+        if (weekIdx < rawData.history.length - 1) {
+          const divider = document.createElement("div");
+          divider.className = "history-week-divider";
+          grid.appendChild(divider);
         }
-        
-        card.innerHTML = `
-          <div class="history-card__header">
-            <span class="history-card__title"><i class="fas fa-calendar-week"></i> ${week.header}</span>
-            ${isNewest ? '<span class="history-card__badge">M\u1edbi nh\u1ea5t</span>' : ''}
-          </div>
-          <div class="hist-table-wrap">
-            <table class="hist-table">
-              <thead><tr><th>#</th><th>V\u1eadn \u0111\u1ed9ng vi\u00ean</th><th>Th\u1ef1c t\u1ebf / \u0110K</th><th>%</th></tr></thead>
-              <tbody>${rowsHtml}</tbody>
-            </table>
-          </div>`;
-        
-        grid.appendChild(card);
       });
     }
 
