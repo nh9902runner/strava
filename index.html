@@ -86,7 +86,7 @@
       <!-- Show warning if closed -->
       <div id="regClosedMessage" class="reg-status-warning" style="display: none;">
         <i class="fas fa-lock"></i>
-        <span>Hệ thống đăng ký chỉ mở vào Chủ Nhật, Thứ Hai và Thứ Ba hàng tuần. Đã quá hạn đăng ký cho tuần này!</span>
+        <span>Hệ thống đăng ký chỉ mở vào Thứ Hai và Thứ Ba hàng tuần. Đã quá hạn đăng ký cho tuần này!</span>
       </div>
 
       <!-- Show form if open -->
@@ -101,6 +101,11 @@
         <div class="form-group">
           <label for="targetKm"><i class="fas fa-road"></i> Số km mục tiêu tuần này</label>
           <input type="number" id="targetKm" placeholder="Ví dụ: 30" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="runnerEmail"><i class="fas fa-envelope"></i> Email của bạn <span style="font-weight: 400; color: var(--text-muted);">(tùy chọn)</span></label>
+          <input type="email" id="runnerEmail" placeholder="example@gmail.com">
         </div>
 
         <button type="submit" id="submitRegBtn" class="submit-reg-btn">
@@ -246,8 +251,8 @@
       
       const now = new Date();
       const dayOfWeek = now.getDay(); // 0 = CN, 1 = T2, 2 = T3, 3 = T4, ...
-      // Cho phép thêm ngày Chủ Nhật (0) và vẫn tạm giữ Thứ Tư (3) để test hôm nay
-      const isOpen = (dayOfWeek === 0 || dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3);
+      // Chính thức: T2 (1) và T3 (2). Tạm giữ T4 (3) để test
+      const isOpen = (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3);
       
       if (!isOpen) {
         document.getElementById("regClosedMessage").style.display = "flex";
@@ -282,27 +287,29 @@
       tbody.innerHTML = "";
       
       if (!rawData || !rawData.thisWeek || rawData.thisWeek.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Không có dữ liệu vận động viên</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Chưa có ai đăng ký tuần này</td></tr>';
         return;
       }
       
-      // Sắp xếp danh sách A-Z
-      const sortedRunners = [...rawData.thisWeek].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+      // Chỉ lấy những người đã đăng ký (regKm > 0), sắp xếp A-Z
+      const registered = [...rawData.thisWeek]
+        .filter(r => r.regKm > 0)
+        .sort((a, b) => a.name.localeCompare(b.name, 'vi'));
       
-      sortedRunners.forEach(runner => {
+      if (registered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">Chưa có ai đăng ký tuần này</td></tr>';
+        return;
+      }
+      
+      registered.forEach(runner => {
         const tr = document.createElement("tr");
         
         const tdName = document.createElement("td");
         tdName.innerHTML = `<strong>${runner.name}</strong>`;
         
         const tdKm = document.createElement("td");
-        if (runner.regKm > 0) {
-          tdKm.className = "reg-km-val";
-          tdKm.textContent = `${runner.regKm} km`;
-        } else {
-          tdKm.className = "reg-km-empty";
-          tdKm.textContent = "Chưa đăng ký";
-        }
+        tdKm.className = "reg-km-val";
+        tdKm.textContent = `${runner.regKm} km`;
         
         tr.appendChild(tdName);
         tr.appendChild(tdKm);
@@ -315,19 +322,22 @@
       
       const runnerSelect = document.getElementById("runnerSelect");
       const targetKmInput = document.getElementById("targetKm");
+      const emailInput = document.getElementById("runnerEmail");
       const submitBtn = document.getElementById("submitRegBtn");
       const statusDiv = document.getElementById("regStatus");
       
       const runnerName = runnerSelect.value;
       const km = parseFloat(targetKmInput.value);
+      const email = emailInput.value.trim();
       
       if (!runnerName || isNaN(km) || km <= 0) {
-        alert("Vui lòng điền đầy đủ thông tin hợp lệ!");
+        alert("Vui lòng chọn tên và nhập số km hợp lệ!");
         return;
       }
       
       runnerSelect.disabled = true;
       targetKmInput.disabled = true;
+      emailInput.disabled = true;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng ký...';
       
@@ -339,7 +349,8 @@
         const payload = {
           action: "register_km",
           runnerName: runnerName,
-          km: km
+          km: km,
+          email: email
         };
         
         const response = await fetch(webappUrl, {
@@ -351,9 +362,13 @@
         
         if (resData.status === "success") {
           statusDiv.className = "reg-status-indicator success";
-          statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đăng ký thành công mục tiêu ${km} km cho vận động viên <strong>${runnerName}</strong>.`;
+          statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đăng ký thành công mục tiêu <strong>${km} km</strong> cho <strong>${runnerName}</strong>!`;
           targetKmInput.value = "";
-          fetchData(); // Cập nhật lại dữ liệu ngầm
+          emailInput.value = "";
+          // Cập nhật lại dữ liệu và render danh sách sau 800ms để Sheets kịp ghi
+          setTimeout(() => {
+            fetchData().then(() => renderRegistrationList());
+          }, 800);
         } else {
           statusDiv.className = "reg-status-indicator error";
           statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> Đăng ký thất bại: ${resData.message || 'Lỗi không xác định'}`;
@@ -365,6 +380,7 @@
       } finally {
         runnerSelect.disabled = false;
         targetKmInput.disabled = false;
+        emailInput.disabled = false;
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận Đăng ký';
       }
