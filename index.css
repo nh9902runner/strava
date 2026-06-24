@@ -815,6 +815,13 @@ header {
   width: 100%;
 }
 
+.history-week-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
 .history-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
