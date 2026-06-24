@@ -252,8 +252,8 @@
       
       const now = new Date();
       const dayOfWeek = now.getDay(); // 0 = CN, 1 = T2, 2 = T3, 3 = T4, ...
-      // Chính thức: T2 (1) và T3 (2). Tạm giữ T4 (3) để test
-      const isOpen = (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3);
+      // Chỉ mở đăng ký vào Thứ Hai (1) và Thứ Ba (2)
+      const isOpen = (dayOfWeek === 1 || dayOfWeek === 2);
       
       if (!isOpen) {
         document.getElementById("regClosedMessage").style.display = "flex";
