@@ -605,6 +605,18 @@ header {
   box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.15);
 }
 
+.form-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.form-hint i {
+  margin-right: 3px;
+  color: var(--primary-light);
+}
+
 .submit-reg-btn {
   width: 100%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -633,6 +645,35 @@ header {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.cancel-reg-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid rgba(255, 61, 113, 0.4);
+  color: #e03060;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.cancel-reg-btn:hover {
+  background: rgba(255, 61, 113, 0.07);
+  border-color: #e03060;
+}
+
+.cancel-reg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Warnings and Status Indicators */

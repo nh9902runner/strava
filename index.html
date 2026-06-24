@@ -100,7 +100,8 @@
 
         <div class="form-group">
           <label for="targetKm"><i class="fas fa-road"></i> Số km mục tiêu tuần này</label>
-          <input type="number" id="targetKm" placeholder="Ví dụ: 30" min="1" required>
+          <input type="number" id="targetKm" placeholder="Ví dụ: 30" min="0" required>
+          <span class="form-hint"><i class="fas fa-info-circle"></i> Nhập <strong>0</strong> để hủy đăng ký</span>
         </div>
 
         <div class="form-group">
@@ -109,7 +110,7 @@
         </div>
 
         <button type="submit" id="submitRegBtn" class="submit-reg-btn">
-          <i class="fas fa-check-circle"></i> Xác nhận Đăng ký
+          <i class="fas fa-check-circle"></i> Xác nhận
         </button>
       </form>
 
@@ -317,6 +318,59 @@
       });
     }
 
+    async function cancelRegistration() {
+      const runnerSelect = document.getElementById("runnerSelect");
+      const runnerName = runnerSelect.value;
+      
+      if (!runnerName) {
+        alert("Vui lòng chọn tên của bạn trước khi hủy đăng ký!");
+        return;
+      }
+      
+      if (!confirm(`Bạn chắc chắn muốn hủy đăng ký của "${runnerName}" không?`)) return;
+      
+      const submitBtn = document.getElementById("submitRegBtn");
+      const cancelBtn = document.getElementById("cancelRegBtn");
+      const statusDiv = document.getElementById("regStatus");
+      
+      runnerSelect.disabled = true;
+      submitBtn.disabled = true;
+      cancelBtn.disabled = true;
+      cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang hủy...';
+      
+      statusDiv.style.display = "block";
+      statusDiv.className = "reg-status-indicator warning";
+      statusDiv.innerHTML = '<i class="fas fa-hourglass-half"></i> Đang gửi yêu cầu hủy...';
+      
+      try {
+        const response = await fetch(webappUrl, {
+          method: "POST",
+          body: JSON.stringify({ action: "cancel_km", runnerName: runnerName })
+        });
+        const resData = await response.json();
+        
+        if (resData.status === "success") {
+          statusDiv.className = "reg-status-indicator success";
+          statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đã hủy đăng ký thành công cho <strong>${runnerName}</strong>.`;
+          setTimeout(() => {
+            fetchData().then(() => renderRegistrationList());
+          }, 800);
+        } else {
+          statusDiv.className = "reg-status-indicator error";
+          statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> Hủy thất bại: ${resData.message || 'Lỗi không xác định'}`;
+        }
+      } catch (err) {
+        console.error(err);
+        statusDiv.className = "reg-status-indicator error";
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Lỗi kết nối: Không thể gửi yêu cầu hủy.`;
+      } finally {
+        runnerSelect.disabled = false;
+        submitBtn.disabled = false;
+        cancelBtn.disabled = false;
+        cancelBtn.innerHTML = '<i class="fas fa-times-circle"></i> Hủy Đăng ký';
+      }
+    }
+
     async function submitRegistration(event) {
       event.preventDefault();
       
@@ -330,9 +384,14 @@
       const km = parseFloat(targetKmInput.value);
       const email = emailInput.value.trim();
       
-      if (!runnerName || isNaN(km) || km <= 0) {
-        alert("Vui lòng chọn tên và nhập số km hợp lệ!");
+      if (!runnerName || isNaN(km) || km < 0) {
+        alert("Vui lòng chọn tên và nhập số km hợp lệ (0 để hủy đăng ký)!");
         return;
+      }
+      
+      // Nếu km = 0: hiển confirm hủy
+      if (km === 0) {
+        if (!confirm(`Bạn muốn hủy đăng ký của "${runnerName}"?`)) return;
       }
       
       runnerSelect.disabled = true;
@@ -362,7 +421,11 @@
         
         if (resData.status === "success") {
           statusDiv.className = "reg-status-indicator success";
-          statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đăng ký thành công mục tiêu <strong>${km} km</strong> cho <strong>${runnerName}</strong>!`;
+          if (km === 0) {
+            statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đã hủy đăng ký thành công cho <strong>${runnerName}</strong>.`;
+          } else {
+            statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đăng ký thành công mục tiêu <strong>${km} km</strong> cho <strong>${runnerName}</strong>!`;
+          }
           targetKmInput.value = "";
           emailInput.value = "";
           // Cập nhật lại dữ liệu và render danh sách sau 800ms để Sheets kịp ghi
