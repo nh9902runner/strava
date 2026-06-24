@@ -683,3 +683,16 @@ header {
   border: 1px solid var(--primary-light);
   color: var(--primary);
 }
+
+.reg-week-period {
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: rgba(123, 44, 191, 0.04);
+  border: 1px solid var(--panel-border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-top: -10px;
+  margin-bottom: 25px;
+  font-weight: 600;
+}

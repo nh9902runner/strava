@@ -81,6 +81,7 @@
     <!-- Registration Tab Section -->
     <div id="registerSection" class="register-section-card" style="display: none;">
       <h2><i class="fas fa-file-signature"></i> Đăng Ký Số Km Mục Tiêu Tuần</h2>
+      <div id="regWeekPeriod" class="reg-week-period"></div>
       
       <!-- Show warning if closed -->
       <div id="regClosedMessage" class="reg-status-warning" style="display: none;">
@@ -215,6 +216,15 @@
     function initRegistrationTab() {
       const select = document.getElementById("runnerSelect");
       select.innerHTML = '<option value="" disabled selected>-- Chọn tên của bạn --</option>';
+      
+      // Hiển thị khoảng thời gian tuần đăng ký lấy từ sheets
+      const weekPeriodDiv = document.getElementById("regWeekPeriod");
+      if (rawData && rawData.thisWeekHeader) {
+        weekPeriodDiv.textContent = rawData.thisWeekHeader;
+        weekPeriodDiv.style.display = "block";
+      } else {
+        weekPeriodDiv.style.display = "none";
+      }
       
       const now = new Date();
       const dayOfWeek = now.getDay(); // 0 = CN, 1 = T2, 2 = T3, 3 = T4, ...
