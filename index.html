@@ -485,17 +485,32 @@
       
       grid.innerHTML = "";
       
-      rawData.history.forEach((week, weekIdx) => {
+      // Tạo một bản sao và đảo ngược để tuần mới nhất (cuối mảng) lên đầu
+      const reversedHistory = [...rawData.history].reverse();
+      
+      reversedHistory.forEach((week, index) => {
         // Section header cho từng tuần
         const section = document.createElement("div");
         section.className = "history-week-section";
+        section.style.marginBottom = "30px";
         
+        // Sử dụng style 'week-info-card' làm box tiêu đề tuần để giống hệt tab tuần trước
         const sectionHeader = document.createElement("div");
-        sectionHeader.className = "history-week-header";
+        sectionHeader.className = "week-info-card";
+        sectionHeader.style.display = "flex";
+        sectionHeader.style.width = "100%";
+        sectionHeader.style.boxSizing = "border-box";
+        sectionHeader.style.marginBottom = "15px";
+        
+        // Xác định xem tuần này có phải tuần gần nhất (sau khi đảo ngược thì index 0 chính là tuần gần nhất)
+        const isNewest = index === 0;
+        
         sectionHeader.innerHTML = `
-          <i class="fas fa-calendar-week"></i>
-          <span>${week.header}</span>
-          ${weekIdx === rawData.history.length - 1 ? '<span class="history-week-badge">Mới nhất</span>' : ''}
+          <span class="week-label">
+            <i class="fas fa-calendar-week" style="margin-right: 8px; color: var(--primary-light);"></i>
+            ${week.header}
+          </span>
+          ${isNewest ? '<span class="update-badge"><i class="fas fa-star" style="margin-right: 4px;"></i>Gần nhất</span>' : ''}
         `;
         section.appendChild(sectionHeader);
         
@@ -528,7 +543,7 @@
             let noteText = runner.note.toString().trim();
             if (noteText && !/^0\s*(\u0111|d|vnd|vn\u0111)?$/i.test(noteText)) {
               if (/^\d+$/.test(noteText)) noteText = Number(noteText).toLocaleString('vi-VN');
-              if (!noteText.toLowerCase().endsWith("vn\u0111") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("\u0111") && !noteText.toLowerCase().endsWith("k")) {
+              if (!noteText.toLowerCase().endsWith("vn\u0110") && !noteText.toLowerCase().endsWith("vnd") && !noteText.endsWith("\u0111") && !noteText.toLowerCase().endsWith("k")) {
                 noteText += " VN\u0110";
               } else if (noteText.endsWith("\u0111") || noteText.toLowerCase().endsWith("d")) {
                 noteText = noteText.replace(/d|\u0111$/i, " VN\u0110");
@@ -595,13 +610,6 @@
         }
         
         grid.appendChild(section);
-        
-        // Phân cách giữa các tuần (trừ tuần cuối)
-        if (weekIdx < rawData.history.length - 1) {
-          const divider = document.createElement("div");
-          divider.className = "history-week-divider";
-          grid.appendChild(divider);
-        }
       });
     }
 
