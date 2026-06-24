@@ -805,3 +805,152 @@ header {
   font-style: italic;
   text-align: right;
 }
+
+/* ── LỊCH SỬ TAB ── */
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+  padding: 6px 0 20px;
+}
+
+.history-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.history-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.history-card--newest {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 1px var(--primary-light);
+}
+
+.history-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  background: linear-gradient(135deg, rgba(123,44,191,0.12), rgba(72,149,239,0.08));
+  border-bottom: 1px solid var(--card-border);
+}
+
+.history-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.history-card__title i {
+  color: var(--primary-light);
+}
+
+.history-card__badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.hist-table-wrap {
+  overflow-x: auto;
+}
+
+.hist-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.hist-table thead th {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.hist-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+
+.hist-table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.hist-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.hist-rank {
+  padding: 8px 6px 8px 12px;
+  font-size: 14px;
+  width: 32px;
+}
+
+.hist-name {
+  padding: 8px 6px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hist-km {
+  padding: 8px 6px;
+  font-weight: 700;
+  color: var(--secondary);
+  white-space: nowrap;
+}
+
+.hist-reg {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.hist-pct {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.hist-pct--ok   { background: rgba(46,213,115,0.15); color: #2ed573; }
+.hist-pct--warn { background: rgba(255,179,0,0.15);  color: #ffb300; }
+.hist-pct--low  { background: rgba(255,71,87,0.15);  color: #ff4757; }
+
+.hist-missed-header td {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 12px 4px;
+  background: rgba(255,71,87,0.05);
+  border-top: 1px solid rgba(255,71,87,0.15);
+}
+
+.hist-missed .hist-name {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.hist-missed .hist-km {
+  color: var(--text-muted);
+  font-weight: 400;
+}

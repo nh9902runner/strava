@@ -50,6 +50,9 @@
       <button class="tab-btn" id="tabLastWeek" onclick="switchTab('lastWeek')">
         <i class="fas fa-history"></i> Tuần Trước
       </button>
+      <button class="tab-btn" id="tabHistory" onclick="switchTab('history')">
+        <i class="fas fa-chart-bar"></i> Lịch Sử
+      </button>
     </div>
 
     <!-- Active Week Header / Info -->
@@ -133,6 +136,13 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- History Tab Section -->
+    <div id="historySection" style="display: none;">
+      <div id="historyGrid" class="history-grid">
+        <!-- Generated dynamically by JS -->
       </div>
     </div>
   </div>
@@ -222,16 +232,28 @@
       document.getElementById("tabThisWeek").classList.toggle("active", tab === 'thisWeek');
       document.getElementById("tabLastWeek").classList.toggle("active", tab === 'lastWeek');
       document.getElementById("tabRegister").classList.toggle("active", tab === 'register');
+      document.getElementById("tabHistory").classList.toggle("active", tab === 'history');
+      
+      const historySection = document.getElementById("historySection");
+      const registerSection = document.getElementById("registerSection");
+      const leaderboardList = document.getElementById("leaderboardList");
+      const weekInfoCard = document.getElementById("weekInfoCard");
+      
+      // Reset all sections
+      historySection.style.display = "none";
+      registerSection.style.display = "none";
+      leaderboardList.style.display = "none";
+      weekInfoCard.style.display = "none";
       
       if (tab === 'register') {
-        document.getElementById("weekInfoCard").style.display = "none";
-        document.getElementById("leaderboardList").style.display = "none";
-        document.getElementById("registerSection").style.display = "block";
+        registerSection.style.display = "block";
         initRegistrationTab();
+      } else if (tab === 'history') {
+        historySection.style.display = "block";
+        renderHistory();
       } else {
-        document.getElementById("weekInfoCard").style.display = "flex";
-        document.getElementById("leaderboardList").style.display = "block";
-        document.getElementById("registerSection").style.display = "none";
+        weekInfoCard.style.display = "flex";
+        leaderboardList.style.display = "block";
         updateBadgeTime();
         renderTab();
       }
@@ -447,6 +469,73 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận Đăng ký';
       }
+    }
+
+    function renderHistory() {
+      const grid = document.getElementById("historyGrid");
+      
+      if (!rawData || !rawData.history || rawData.history.length === 0) {
+        grid.innerHTML = `
+          <div class="state-container" style="grid-column: 1/-1;">
+            <i class="fas fa-clock" style="font-size:40px;color:var(--text-muted);margin-bottom:10px;"></i>
+            <p style="color:var(--text-secondary);">Ch\u01b0a c\u00f3 d\u1eef li\u1ec7u l\u1ecbch s\u1eed. D\u1eef li\u1ec7u s\u1ebd xu\u1ea5t hi\u1ec7n sau khi k\u1ebft th\u00fac tu\u1ea7n \u0111\u1ea7u ti\u00ean.</p>
+          </div>`;
+        return;
+      }
+      
+      grid.innerHTML = "";
+      
+      rawData.history.forEach((week, idx) => {
+        const isNewest = idx === rawData.history.length - 1;
+        const card = document.createElement("div");
+        card.className = "history-card" + (isNewest ? " history-card--newest" : "");
+        
+        // Runners c\u00f3 actKm > 0
+        const active = week.runners.filter(r => r.actKm > 0);
+        const missed = week.runners.filter(r => r.actKm === 0 && r.regKm > 0);
+        
+        let rowsHtml = "";
+        active.forEach((r, i) => {
+          const pct = r.regKm > 0 ? Math.min(100, Math.round(r.actKm / r.regKm * 100)) : null;
+          const medal = i === 0 ? '\uD83E\uDD47' : i === 1 ? '\uD83E\uDD48' : i === 2 ? '\uD83E\uDD49' : `${i+1}.`;
+          const pctHtml = pct !== null
+            ? `<span class="hist-pct ${pct >= 100 ? 'hist-pct--ok' : pct >= 70 ? 'hist-pct--warn' : 'hist-pct--low'}">${pct}%</span>`
+            : '';
+          rowsHtml += `
+            <tr>
+              <td class="hist-rank">${medal}</td>
+              <td class="hist-name">${r.name}</td>
+              <td class="hist-km">${r.actKm.toFixed(1)}<span class="hist-reg"> /${r.regKm}</span></td>
+              <td>${pctHtml}</td>
+            </tr>`;
+        });
+        
+        // Ng\u01b0\u1eddi \u0111\u0103ng k\u00fd nh\u01b0ng kh\u00f4ng ch\u1ea1y
+        if (missed.length > 0) {
+          rowsHtml += `<tr class="hist-missed-header"><td colspan="4">\u26a0\ufe0f Kh\u00f4ng ho\u00e0n th\u00e0nh</td></tr>`;
+          missed.forEach(r => {
+            rowsHtml += `<tr class="hist-missed"><td></td><td class="hist-name">${r.name}</td><td class="hist-km" colspan="2">0 /${r.regKm} km</td></tr>`;
+          });
+        }
+        
+        if (!rowsHtml) {
+          rowsHtml = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:16px;font-style:italic;">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</td></tr>`;
+        }
+        
+        card.innerHTML = `
+          <div class="history-card__header">
+            <span class="history-card__title"><i class="fas fa-calendar-week"></i> ${week.header}</span>
+            ${isNewest ? '<span class="history-card__badge">M\u1edbi nh\u1ea5t</span>' : ''}
+          </div>
+          <div class="hist-table-wrap">
+            <table class="hist-table">
+              <thead><tr><th>#</th><th>V\u1eadn \u0111\u1ed9ng vi\u00ean</th><th>Th\u1ef1c t\u1ebf / \u0110K</th><th>%</th></tr></thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>`;
+        
+        grid.appendChild(card);
+      });
     }
 
     function renderTab() {
