@@ -86,7 +86,7 @@
       <!-- Show warning if closed -->
       <div id="regClosedMessage" class="reg-status-warning" style="display: none;">
         <i class="fas fa-lock"></i>
-        <span>Hệ thống đăng ký chỉ mở từ Thứ Hai đến Thứ Tư hàng tuần. Đã quá hạn đăng ký cho tuần này!</span>
+        <span>Hệ thống đăng ký chỉ mở vào Chủ Nhật, Thứ Hai và Thứ Ba hàng tuần. Đã quá hạn đăng ký cho tuần này!</span>
       </div>
 
       <!-- Show form if open -->
@@ -110,6 +110,24 @@
 
       <!-- Status indicator -->
       <div id="regStatus" class="reg-status-indicator" style="display: none;"></div>
+
+      <!-- Registration List Section -->
+      <div class="reg-list-container">
+        <h3><i class="fas fa-list-ol"></i> Danh Sách Đăng Ký Tuần Này</h3>
+        <div class="reg-table-wrapper">
+          <table class="reg-table">
+            <thead>
+              <tr>
+                <th>Vận động viên</th>
+                <th style="text-align: right;">Mục tiêu đăng ký</th>
+              </tr>
+            </thead>
+            <tbody id="regListBody">
+              <!-- Will be generated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -228,11 +246,13 @@
       
       const now = new Date();
       const dayOfWeek = now.getDay(); // 0 = CN, 1 = T2, 2 = T3, 3 = T4, ...
-      const isOpen = (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3);
+      // Cho phép thêm ngày Chủ Nhật (0) và vẫn tạm giữ Thứ Tư (3) để test hôm nay
+      const isOpen = (dayOfWeek === 0 || dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3);
       
       if (!isOpen) {
         document.getElementById("regClosedMessage").style.display = "flex";
         document.getElementById("regForm").style.display = "none";
+        renderRegistrationList();
         return;
       } else {
         document.getElementById("regClosedMessage").style.display = "none";
@@ -253,6 +273,41 @@
       statusDiv.style.display = "none";
       statusDiv.className = "reg-status-indicator";
       statusDiv.innerHTML = "";
+      
+      renderRegistrationList();
+    }
+
+    function renderRegistrationList() {
+      const tbody = document.getElementById("regListBody");
+      tbody.innerHTML = "";
+      
+      if (!rawData || !rawData.thisWeek || rawData.thisWeek.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Không có dữ liệu vận động viên</td></tr>';
+        return;
+      }
+      
+      // Sắp xếp danh sách A-Z
+      const sortedRunners = [...rawData.thisWeek].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+      
+      sortedRunners.forEach(runner => {
+        const tr = document.createElement("tr");
+        
+        const tdName = document.createElement("td");
+        tdName.innerHTML = `<strong>${runner.name}</strong>`;
+        
+        const tdKm = document.createElement("td");
+        if (runner.regKm > 0) {
+          tdKm.className = "reg-km-val";
+          tdKm.textContent = `${runner.regKm} km`;
+        } else {
+          tdKm.className = "reg-km-empty";
+          tdKm.textContent = "Chưa đăng ký";
+        }
+        
+        tr.appendChild(tdName);
+        tr.appendChild(tdKm);
+        tbody.appendChild(tr);
+      });
     }
 
     async function submitRegistration(event) {

@@ -696,3 +696,71 @@ header {
   margin-bottom: 25px;
   font-weight: 600;
 }
+
+.reg-list-container {
+  margin-top: 30px;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 25px;
+}
+
+.reg-list-container h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reg-table-wrapper {
+  max-height: 350px;
+  overflow-y: auto;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+}
+
+.reg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.reg-table th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.reg-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(123, 44, 191, 0.04);
+  color: var(--text-primary);
+}
+
+.reg-table tr:last-child td {
+  border-bottom: none;
+}
+
+.reg-table tr:hover td {
+  background: rgba(123, 44, 191, 0.02);
+}
+
+.reg-table td.reg-km-val {
+  font-weight: 700;
+  color: var(--primary);
+  text-align: right;
+}
+
+.reg-table td.reg-km-empty {
+  color: var(--text-muted);
+  font-weight: normal;
+  font-style: italic;
+  text-align: right;
+}
