@@ -47,6 +47,9 @@
       <button class="tab-btn" id="tabLastWeek" onclick="switchTab('lastWeek')">
         <i class="fas fa-history"></i> Tuần Trước
       </button>
+      <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">
+        <i class="fas fa-edit"></i> Đăng Ký
+      </button>
     </div>
 
     <!-- Active Week Header / Info -->
@@ -73,6 +76,39 @@
     <!-- Main Leaderboard list -->
     <div class="leaderboard-list" id="leaderboardList">
       <!-- Generated dynamically by Javascript -->
+    </div>
+
+    <!-- Registration Tab Section -->
+    <div id="registerSection" class="register-section-card" style="display: none;">
+      <h2><i class="fas fa-file-signature"></i> Đăng Ký Số Km Mục Tiêu Tuần</h2>
+      
+      <!-- Show warning if closed -->
+      <div id="regClosedMessage" class="reg-status-warning" style="display: none;">
+        <i class="fas fa-lock"></i>
+        <span>Hệ thống đăng ký chỉ mở vào Thứ Hai và Thứ Ba hàng tuần. Đã quá hạn đăng ký cho tuần này!</span>
+      </div>
+
+      <!-- Show form if open -->
+      <form id="regForm" onsubmit="submitRegistration(event)" style="display: block;">
+        <div class="form-group">
+          <label for="runnerSelect"><i class="fas fa-user"></i> Chọn vận động viên</label>
+          <select id="runnerSelect" required>
+            <option value="" disabled selected>-- Chọn tên của bạn --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="targetKm"><i class="fas fa-road"></i> Số km mục tiêu tuần này</label>
+          <input type="number" id="targetKm" placeholder="Ví dụ: 30" min="1" required>
+        </div>
+
+        <button type="submit" id="submitRegBtn" class="submit-reg-btn">
+          <i class="fas fa-check-circle"></i> Xác nhận Đăng ký
+        </button>
+      </form>
+
+      <!-- Status indicator -->
+      <div id="regStatus" class="reg-status-indicator" style="display: none;"></div>
     </div>
   </div>
 
@@ -151,9 +187,113 @@
       // Update UI active states
       document.getElementById("tabThisWeek").classList.toggle("active", tab === 'thisWeek');
       document.getElementById("tabLastWeek").classList.toggle("active", tab === 'lastWeek');
+      document.getElementById("tabRegister").classList.toggle("active", tab === 'register');
       
-      updateBadgeTime();
-      renderTab();
+      if (tab === 'register') {
+        document.getElementById("weekInfoCard").style.display = "none";
+        document.getElementById("leaderboardList").style.display = "none";
+        document.getElementById("registerSection").style.display = "block";
+        initRegistrationTab();
+      } else {
+        document.getElementById("weekInfoCard").style.display = "flex";
+        document.getElementById("leaderboardList").style.display = "block";
+        document.getElementById("registerSection").style.display = "none";
+        updateBadgeTime();
+        renderTab();
+      }
+    }
+
+    function initRegistrationTab() {
+      const select = document.getElementById("runnerSelect");
+      select.innerHTML = '<option value="" disabled selected>-- Chọn tên của bạn --</option>';
+      
+      const now = new Date();
+      const dayOfWeek = now.getDay(); // 0 = CN, 1 = T2, 2 = T3, 3 = T4, ...
+      const isOpen = (dayOfWeek === 1 || dayOfWeek === 2);
+      
+      if (!isOpen) {
+        document.getElementById("regClosedMessage").style.display = "flex";
+        document.getElementById("regForm").style.display = "none";
+        return;
+      } else {
+        document.getElementById("regClosedMessage").style.display = "none";
+        document.getElementById("regForm").style.display = "block";
+      }
+      
+      if (rawData && rawData.thisWeek) {
+        const sortedRunners = [...rawData.thisWeek].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+        sortedRunners.forEach(runner => {
+          const opt = document.createElement("option");
+          opt.value = runner.name;
+          opt.textContent = runner.name;
+          select.appendChild(opt);
+        });
+      }
+      
+      const statusDiv = document.getElementById("regStatus");
+      statusDiv.style.display = "none";
+      statusDiv.className = "reg-status-indicator";
+      statusDiv.innerHTML = "";
+    }
+
+    async function submitRegistration(event) {
+      event.preventDefault();
+      
+      const runnerSelect = document.getElementById("runnerSelect");
+      const targetKmInput = document.getElementById("targetKm");
+      const submitBtn = document.getElementById("submitRegBtn");
+      const statusDiv = document.getElementById("regStatus");
+      
+      const runnerName = runnerSelect.value;
+      const km = parseFloat(targetKmInput.value);
+      
+      if (!runnerName || isNaN(km) || km <= 0) {
+        alert("Vui lòng điền đầy đủ thông tin hợp lệ!");
+        return;
+      }
+      
+      runnerSelect.disabled = true;
+      targetKmInput.disabled = true;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng ký...';
+      
+      statusDiv.style.display = "block";
+      statusDiv.className = "reg-status-indicator warning";
+      statusDiv.innerHTML = '<i class="fas fa-hourglass-half"></i> Đang gửi yêu cầu lên Google Sheets...';
+      
+      try {
+        const payload = {
+          action: "register_km",
+          runnerName: runnerName,
+          km: km
+        };
+        
+        const response = await fetch(webappUrl, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        
+        const resData = await response.json();
+        
+        if (resData.status === "success") {
+          statusDiv.className = "reg-status-indicator success";
+          statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Đăng ký thành công mục tiêu ${km} km cho vận động viên <strong>${runnerName}</strong>.`;
+          targetKmInput.value = "";
+          fetchData(); // Cập nhật lại dữ liệu ngầm
+        } else {
+          statusDiv.className = "reg-status-indicator error";
+          statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> Đăng ký thất bại: ${resData.message || 'Lỗi không xác định'}`;
+        }
+      } catch (err) {
+        console.error(err);
+        statusDiv.className = "reg-status-indicator error";
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Lỗi kết nối: Không thể gửi dữ liệu đăng ký.`;
+      } finally {
+        runnerSelect.disabled = false;
+        targetKmInput.disabled = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận Đăng ký';
+      }
     }
 
     function renderTab() {
