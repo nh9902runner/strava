@@ -144,12 +144,6 @@
       <div id="historyGrid" class="history-grid">
         <!-- Generated dynamically by JS -->
       </div>
-      <!-- Nút Tải thêm -->
-      <div style="text-align: center; margin-top: 10px; padding-bottom: 20px;">
-        <button id="historyLoadMoreBtn" onclick="loadMoreHistory()" style="display:none; align-items:center; justify-content:center; gap:8px; margin:0 auto; padding:13px 32px; background:linear-gradient(135deg,rgba(123,44,191,0.08),rgba(224,44,152,0.06)); border:1.5px solid rgba(123,44,191,0.22); border-radius:24px; color:var(--primary); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.25s ease; font-family:var(--font-family);" onmouseover="this.style.background='linear-gradient(135deg,var(--primary),var(--secondary))';this.style.color='#fff';this.style.boxShadow='0 6px 20px rgba(123,44,191,0.25)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(123,44,191,0.08),rgba(224,44,152,0.06))';this.style.color='var(--primary)';this.style.boxShadow='none'">
-          <i class="fas fa-chevron-down"></i> Tải thêm
-        </button>
-      </div>
     </div>
   </div>
 
@@ -161,7 +155,6 @@
     let webappUrl = DEFAULT_WEBAPP_URL || localStorage.getItem("nh9902_webapp_url") || "";
     let rawData = null;
     let currentActiveTab = "register"; // Mặc định là 'register' (Đăng ký)
-    let historyVisibleCount = 4; // Số tuần hiển thị ban đầu trong tab Lịch sử
 
     document.addEventListener("DOMContentLoaded", () => {
       if (!webappUrl) {
@@ -257,7 +250,6 @@
         initRegistrationTab();
       } else if (tab === 'history') {
         historySection.style.display = "block";
-        historyVisibleCount = 4; // Reset mỗi khi vào tab
         renderHistory();
       } else {
         weekInfoCard.style.display = "flex";
@@ -481,7 +473,6 @@
 
     function renderHistory() {
       const grid = document.getElementById("historyGrid");
-      const loadMoreBtn = document.getElementById("historyLoadMoreBtn");
       
       if (!rawData || !rawData.history || rawData.history.length === 0) {
         grid.innerHTML = `
@@ -489,29 +480,15 @@
             <i class="fas fa-clock" style="font-size:40px;color:var(--text-muted);margin-bottom:10px;"></i>
             <p style="color:var(--text-secondary);">Chưa có dữ liệu lịch sử. Dữ liệu xuất hiện sau khi kết thúc tuần đầu tiên.</p>
           </div>`;
-        if (loadMoreBtn) loadMoreBtn.style.display = "none";
         return;
       }
       
       grid.innerHTML = "";
       
-      // Đảo ngược để tuần mới nhất (cuối mảng) lên đầu
+      // Tạo một bản sao và đảo ngược để tuần mới nhất (cuối mảng) lên đầu
       const reversedHistory = [...rawData.history].reverse();
       
-      // Chỉ hiển thị số tuần theo historyVisibleCount
-      const weeksToShow = reversedHistory.slice(0, historyVisibleCount);
-      
-      // Cập nhật nút Tải thêm
-      if (loadMoreBtn) {
-        if (historyVisibleCount >= reversedHistory.length) {
-          loadMoreBtn.style.display = "none";
-        } else {
-          loadMoreBtn.style.display = "flex";
-          loadMoreBtn.innerHTML = `<i class="fas fa-chevron-down"></i> Tải thêm`;
-        }
-      }
-      
-      weeksToShow.forEach((week, index) => {
+      reversedHistory.forEach((week, index) => {
         // Section header cho từng tuần
         const section = document.createElement("div");
         section.className = "history-week-section";
@@ -634,18 +611,6 @@
         
         grid.appendChild(section);
       });
-    }
-
-    function loadMoreHistory() {
-      historyVisibleCount += 4;
-      renderHistory();
-      // Cuộn xuống để thấy nội dung mới vừa tải
-      const grid = document.getElementById("historyGrid");
-      const sections = grid.querySelectorAll(".history-week-section");
-      if (sections.length > 0) {
-        const lastVisible = sections[sections.length - 1];
-        lastVisible.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
     }
 
     function renderTab() {
