@@ -154,6 +154,7 @@
 
     let webappUrl = DEFAULT_WEBAPP_URL || localStorage.getItem("nh9902_webapp_url") || "";
     let rawData = null;
+    let historyData = null;
     let currentActiveTab = "register"; // Mặc định là 'register' (Đăng ký)
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -224,7 +225,7 @@
       badge.innerHTML = time ? `<i class="fas fa-hourglass-half"></i> Cập nhật: ${time}` : "";
     }
 
-    function switchTab(tab) {
+    async function switchTab(tab) {
       if (currentActiveTab === tab) return;
       currentActiveTab = tab;
       
@@ -250,12 +251,46 @@
         initRegistrationTab();
       } else if (tab === 'history') {
         historySection.style.display = "block";
-        renderHistory();
+        if (!historyData) {
+          await fetchHistoryData();
+        } else {
+          renderHistory();
+        }
       } else {
         weekInfoCard.style.display = "flex";
         leaderboardList.style.display = "block";
         updateBadgeTime();
         renderTab();
+      }
+    }
+
+    async function fetchHistoryData() {
+      const grid = document.getElementById("historyGrid");
+      grid.innerHTML = `
+        <div class="state-container" style="padding: 40px 0;">
+          <div class="spinner"></div>
+          <p style="color: var(--text-secondary); margin-top: 10px;">Đang tải dữ liệu lịch sử...</p>
+        </div>`;
+      
+      try {
+        const response = await fetch(webappUrl + (webappUrl.includes('?') ? '&' : '?') + 'type=history');
+        if (!response.ok) throw new Error("Không thể tải dữ liệu lịch sử");
+        
+        historyData = await response.json();
+        if (historyData.error) {
+          throw new Error("Lỗi Apps Script: " + historyData.error);
+        }
+        renderHistory();
+      } catch (error) {
+        console.error(error);
+        grid.innerHTML = `
+          <div class="state-container" style="color: #ff3d71; padding: 40px 0;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 10px;"></i>
+            <p>Lỗi: ${error.message}</p>
+            <button onclick="fetchHistoryData()" style="margin-top: 10px; background: rgba(255,255,255,0.1); border: 1px solid var(--panel-border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+              Thử lại
+            </button>
+          </div>`;
       }
     }
 
@@ -474,7 +509,7 @@
     function renderHistory() {
       const grid = document.getElementById("historyGrid");
       
-      if (!rawData || !rawData.history || rawData.history.length === 0) {
+      if (!historyData || !historyData.history || historyData.history.length === 0) {
         grid.innerHTML = `
           <div class="state-container">
             <i class="fas fa-clock" style="font-size:40px;color:var(--text-muted);margin-bottom:10px;"></i>
@@ -486,7 +521,7 @@
       grid.innerHTML = "";
       
       // Tạo một bản sao và đảo ngược để tuần mới nhất (cuối mảng) lên đầu
-      const reversedHistory = [...rawData.history].reverse();
+      const reversedHistory = [...historyData.history].reverse();
       
       reversedHistory.forEach((week, index) => {
         // Section header cho từng tuần
