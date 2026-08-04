@@ -163,9 +163,9 @@
 
     let webappUrl = DEFAULT_WEBAPP_URL || localStorage.getItem("nh9902_webapp_url") || "";
     let rawData = null;
-    let historyData = null;
+    let historyWeeks = [];
+    let hasMoreHistory = false;
     let currentActiveTab = "register"; // Mặc định là 'register' (Đăng ký)
-    let historyWeeksLimit = 4;
 
     document.addEventListener("DOMContentLoaded", () => {
       if (!webappUrl) {
@@ -261,12 +261,7 @@
         initRegistrationTab();
       } else if (tab === 'history') {
         historySection.style.display = "block";
-        historyWeeksLimit = 4;
-        if (!historyData) {
-          await fetchHistoryData();
-        } else {
-          renderHistory();
-        }
+        fetchHistoryData(0);
       } else {
         weekInfoCard.style.display = "flex";
         leaderboardList.style.display = "block";
@@ -275,33 +270,66 @@
       }
     }
 
-    async function fetchHistoryData() {
+    async function fetchHistoryData(offset = 0) {
       const grid = document.getElementById("historyGrid");
-      grid.innerHTML = `
-        <div class="state-container" style="padding: 40px 0;">
-          <div class="spinner"></div>
-          <p style="color: var(--text-secondary); margin-top: 10px;">Đang tải dữ liệu lịch sử...</p>
-        </div>`;
+      
+      if (offset === 0) {
+        historyWeeks = [];
+        grid.innerHTML = `
+          <div class="state-container" style="padding: 40px 0;">
+            <div class="spinner"></div>
+            <p style="color: var(--text-secondary); margin-top: 10px;">Đang tải dữ liệu lịch sử...</p>
+          </div>`;
+      } else {
+        const btn = document.querySelector("#loadMoreHistoryContainer button");
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
+        }
+      }
       
       try {
-        const response = await fetch(webappUrl + (webappUrl.includes('?') ? '&' : '?') + 'type=history');
+        const response = await fetch(`${webappUrl}${webappUrl.includes('?') ? '&' : '?'}type=history&offset=${offset}&limit=4`);
         if (!response.ok) throw new Error("Không thể tải dữ liệu lịch sử");
         
-        historyData = await response.json();
-        if (historyData.error) {
-          throw new Error("Lỗi Apps Script: " + historyData.error);
+        const resData = await response.json();
+        if (resData.error) {
+          throw new Error("Lỗi Apps Script: " + resData.error);
         }
+        
+        if (offset === 0) {
+          grid.innerHTML = "";
+        } else {
+          const btnContainer = document.getElementById("loadMoreHistoryContainer");
+          if (btnContainer) btnContainer.remove();
+        }
+        
+        historyWeeks = historyWeeks.concat(resData.history || []);
+        hasMoreHistory = resData.hasMore || false;
+        
         renderHistory();
       } catch (error) {
         console.error(error);
-        grid.innerHTML = `
-          <div class="state-container" style="color: #ff3d71; padding: 40px 0;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 10px;"></i>
-            <p>Lỗi: ${error.message}</p>
-            <button onclick="fetchHistoryData()" style="margin-top: 10px; background: rgba(255,255,255,0.1); border: 1px solid var(--panel-border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
-              Thử lại
-            </button>
-          </div>`;
+        if (offset === 0) {
+          grid.innerHTML = `
+            <div class="state-container" style="color: #ff3d71; padding: 40px 0;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 10px;"></i>
+              <p>Lỗi: ${error.message}</p>
+              <button onclick="fetchHistoryData(0)" style="margin-top: 10px; background: rgba(255,255,255,0.1); border: 1px solid var(--panel-border); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                Thử lại
+              </button>
+            </div>`;
+        } else {
+          alert("Lỗi khi tải thêm: " + error.message);
+          const btnContainer = document.getElementById("loadMoreHistoryContainer");
+          if (btnContainer) {
+            btnContainer.innerHTML = `
+              <button onclick="loadMoreHistory()" class="cancel-reg-btn" style="display:inline-flex; width:auto; padding:10px 24px; border-color:var(--primary-light); color:var(--primary); background:rgba(123,44,191,0.05); margin-top:0;">
+                <i class="fas fa-sync-alt"></i> Tải thêm lịch sử
+              </button>
+            `;
+          }
+        }
       }
     }
 
@@ -532,8 +560,9 @@
 
     function renderHistory() {
       const grid = document.getElementById("historyGrid");
+      grid.innerHTML = "";
       
-      if (!historyData || !historyData.history || historyData.history.length === 0) {
+      if (historyWeeks.length === 0) {
         grid.innerHTML = `
           <div class="state-container">
             <i class="fas fa-clock" style="font-size:40px;color:var(--text-muted);margin-bottom:10px;"></i>
@@ -542,15 +571,7 @@
         return;
       }
       
-      grid.innerHTML = "";
-      
-      // Tạo một bản sao và đảo ngược để tuần mới nhất (cuối mảng) lên đầu
-      const reversedHistory = [...historyData.history].reverse();
-      
-      // Giới hạn số tuần hiển thị dựa trên historyWeeksLimit
-      const renderedWeeks = reversedHistory.slice(0, historyWeeksLimit);
-      
-      renderedWeeks.forEach((week, index) => {
+      historyWeeks.forEach((week, index) => {
         // Section header cho từng tuần
         const section = document.createElement("div");
         section.className = "history-week-section";
@@ -564,7 +585,7 @@
         sectionHeader.style.boxSizing = "border-box";
         sectionHeader.style.marginBottom = "15px";
         
-        // Xác định xem tuần này có phải tuần gần nhất (sau khi đảo ngược thì index 0 chính là tuần gần nhất)
+        // Xác định xem tuần này có phải tuần gần nhất
         const isNewest = index === 0;
         
         sectionHeader.innerHTML = `
@@ -673,9 +694,9 @@
         
         grid.appendChild(section);
       });
-
-      // Hiển thị nút "Tải thêm" nếu số tuần lịch sử thực tế lớn hơn giới hạn hiển thị hiện tại
-      if (reversedHistory.length > historyWeeksLimit) {
+      
+      // Hiển thị nút "Tải thêm" nếu backend báo còn dữ liệu
+      if (hasMoreHistory) {
         const btnContainer = document.createElement("div");
         btnContainer.id = "loadMoreHistoryContainer";
         btnContainer.style.textAlign = "center";
