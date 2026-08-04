@@ -341,6 +341,9 @@
         if (!response.ok) throw new Error("Không thể tải dữ liệu lịch sử");
         
         const resData = await response.json();
+        console.log('[History Debug] API response:', JSON.stringify(resData).substring(0, 500));
+        console.log('[History Debug] resData.history:', resData.history ? resData.history.length : 'undefined');
+        console.log('[History Debug] resData.weeks:', resData.weeks ? resData.weeks.length : 'undefined');
         if (resData.error) {
           throw new Error("Lỗi Apps Script: " + resData.error);
         }
@@ -352,7 +355,7 @@
           if (btnContainer) btnContainer.remove();
         }
         
-        historyWeeks = historyWeeks.concat(resData.history || []);
+        historyWeeks = historyWeeks.concat(resData.history || resData.weeks || []);
         hasMoreHistory = resData.hasMore || false;
         
         renderHistory();
