@@ -712,8 +712,7 @@
     }
 
     function loadMoreHistory() {
-      historyWeeksLimit += 4;
-      renderHistory();
+      fetchHistoryData(historyWeeks.length);
     }
 
     function renderTab() {
