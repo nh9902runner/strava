@@ -108,6 +108,14 @@
         </div>
 
         <div class="form-group">
+          <label for="pigRegister"><i class="fas fa-piggy-bank"></i> Đăng ký nuôi heo <span style="font-weight: 400; color: var(--text-muted);">(phạt 20k/km nếu thiếu mục tiêu)</span></label>
+          <select id="pigRegister" required>
+            <option value="yes" selected>Có đăng ký nuôi heo</option>
+            <option value="no">Không đăng ký nuôi heo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label for="runnerEmail"><i class="fas fa-envelope"></i> Email <span style="font-weight: 400; color: var(--text-muted);">(nhận báo cáo tổng kết tuần)</span></label>
           <input type="email" id="runnerEmail" placeholder="example@gmail.com">
         </div>
@@ -433,12 +441,14 @@
       
       const runnerSelect = document.getElementById("runnerSelect");
       const targetKmInput = document.getElementById("targetKm");
+      const pigRegisterSelect = document.getElementById("pigRegister");
       const emailInput = document.getElementById("runnerEmail");
       const submitBtn = document.getElementById("submitRegBtn");
       const statusDiv = document.getElementById("regStatus");
       
       const runnerName = runnerSelect.value;
       const km = parseFloat(targetKmInput.value);
+      const pigRegister = pigRegisterSelect.value === "yes";
       const email = emailInput.value.trim();
       
       if (!runnerName || isNaN(km) || km < 0) {
@@ -453,6 +463,7 @@
       
       runnerSelect.disabled = true;
       targetKmInput.disabled = true;
+      pigRegisterSelect.disabled = true;
       emailInput.disabled = true;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng ký...';
@@ -466,6 +477,7 @@
           action: "register_km",
           runnerName: runnerName,
           km: km,
+          pigRegister: pigRegister,
           email: email
         };
         
@@ -500,6 +512,7 @@
       } finally {
         runnerSelect.disabled = false;
         targetKmInput.disabled = false;
+        pigRegisterSelect.disabled = false;
         emailInput.disabled = false;
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận Đăng ký';
