@@ -110,8 +110,8 @@
         <div class="form-group">
           <label for="pigRegister"><i class="fas fa-piggy-bank"></i> Đăng ký nuôi heo <span style="font-weight: 400; color: var(--text-muted);">(phạt 20k/km nếu thiếu mục tiêu)</span></label>
           <select id="pigRegister" required>
-            <option value="yes" selected>Có đăng ký nuôi heo</option>
-            <option value="no">Không đăng ký nuôi heo</option>
+            <option value="yes" selected>Có</option>
+            <option value="no">Không</option>
           </select>
         </div>
 
@@ -136,6 +136,7 @@
             <thead>
               <tr>
                 <th>Vận động viên</th>
+                <th style="text-align: center;">Nuôi heo</th>
                 <th style="text-align: right;">Mục tiêu đăng ký</th>
               </tr>
             </thead>
@@ -353,7 +354,7 @@
       tbody.innerHTML = "";
       
       if (!rawData || !rawData.thisWeek || rawData.thisWeek.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px;">Chưa có ai đăng ký tuần này</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px;">Chưa có ai đăng ký tuần này</td></tr>';
         return;
       }
       
@@ -363,7 +364,7 @@
         .sort((a, b) => a.name.localeCompare(b.name, 'vi'));
       
       if (registered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">Chưa có ai đăng ký tuần này</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;">Chưa có ai đăng ký tuần này</td></tr>';
         return;
       }
       
@@ -373,11 +374,19 @@
         const tdName = document.createElement("td");
         tdName.innerHTML = `<strong>${runner.name}</strong>`;
         
+        const tdPig = document.createElement("td");
+        tdPig.style.textAlign = "center";
+        const isPig = runner.pig === "Có" || runner.pig === undefined;
+        tdPig.innerHTML = isPig 
+          ? `<span class="fine-badge" style="margin-top:0; background:rgba(252, 76, 2, 0.1); border-color:rgba(252, 76, 2, 0.2); color:var(--strava-orange);"><i class="fas fa-piggy-bank"></i> Có</span>`
+          : `<span class="no-fine-badge" style="margin-top:0;"><i class="fas fa-times"></i> Không</span>`;
+        
         const tdKm = document.createElement("td");
         tdKm.className = "reg-km-val";
         tdKm.textContent = `${runner.regKm} km`;
         
         tr.appendChild(tdName);
+        tr.appendChild(tdPig);
         tr.appendChild(tdKm);
         tbody.appendChild(tr);
       });
