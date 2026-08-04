@@ -136,8 +136,8 @@
             <thead>
               <tr>
                 <th>Vận động viên</th>
-                <th style="text-align: center;">Nuôi heo</th>
                 <th style="text-align: right;">Mục tiêu đăng ký</th>
+                <th style="text-align: center;">Nuôi heo</th>
               </tr>
             </thead>
             <tbody id="regListBody">
@@ -165,6 +165,7 @@
     let rawData = null;
     let historyData = null;
     let currentActiveTab = "register"; // Mặc định là 'register' (Đăng ký)
+    let historyWeeksLimit = 4;
 
     document.addEventListener("DOMContentLoaded", () => {
       if (!webappUrl) {
@@ -260,6 +261,7 @@
         initRegistrationTab();
       } else if (tab === 'history') {
         historySection.style.display = "block";
+        historyWeeksLimit = 4;
         if (!historyData) {
           await fetchHistoryData();
         } else {
@@ -374,6 +376,10 @@
         const tdName = document.createElement("td");
         tdName.innerHTML = `<strong>${runner.name}</strong>`;
         
+        const tdKm = document.createElement("td");
+        tdKm.className = "reg-km-val";
+        tdKm.textContent = `${runner.regKm} km`;
+        
         const tdPig = document.createElement("td");
         tdPig.style.textAlign = "center";
         const isPig = runner.pig === "Có" || runner.pig === undefined;
@@ -381,13 +387,9 @@
           ? `<span class="fine-badge" style="margin-top:0; background:rgba(252, 76, 2, 0.1); border-color:rgba(252, 76, 2, 0.2); color:var(--strava-orange);"><i class="fas fa-piggy-bank"></i> Có</span>`
           : `<span class="no-fine-badge" style="margin-top:0;"><i class="fas fa-times"></i> Không</span>`;
         
-        const tdKm = document.createElement("td");
-        tdKm.className = "reg-km-val";
-        tdKm.textContent = `${runner.regKm} km`;
-        
         tr.appendChild(tdName);
-        tr.appendChild(tdPig);
         tr.appendChild(tdKm);
+        tr.appendChild(tdPig);
         tbody.appendChild(tr);
       });
     }
@@ -545,7 +547,10 @@
       // Tạo một bản sao và đảo ngược để tuần mới nhất (cuối mảng) lên đầu
       const reversedHistory = [...historyData.history].reverse();
       
-      reversedHistory.forEach((week, index) => {
+      // Giới hạn số tuần hiển thị dựa trên historyWeeksLimit
+      const renderedWeeks = reversedHistory.slice(0, historyWeeksLimit);
+      
+      renderedWeeks.forEach((week, index) => {
         // Section header cho từng tuần
         const section = document.createElement("div");
         section.className = "history-week-section";
@@ -668,6 +673,26 @@
         
         grid.appendChild(section);
       });
+
+      // Hiển thị nút "Tải thêm" nếu số tuần lịch sử thực tế lớn hơn giới hạn hiển thị hiện tại
+      if (reversedHistory.length > historyWeeksLimit) {
+        const btnContainer = document.createElement("div");
+        btnContainer.id = "loadMoreHistoryContainer";
+        btnContainer.style.textAlign = "center";
+        btnContainer.style.marginTop = "20px";
+        btnContainer.style.marginBottom = "20px";
+        btnContainer.innerHTML = `
+          <button onclick="loadMoreHistory()" class="cancel-reg-btn" style="display:inline-flex; width:auto; padding:10px 24px; border-color:var(--primary-light); color:var(--primary); background:rgba(123,44,191,0.05); margin-top:0;">
+            <i class="fas fa-sync-alt"></i> Tải thêm lịch sử
+          </button>
+        `;
+        grid.appendChild(btnContainer);
+      }
+    }
+
+    function loadMoreHistory() {
+      historyWeeksLimit += 4;
+      renderHistory();
     }
 
     function renderTab() {
