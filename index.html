@@ -359,6 +359,9 @@
         
         eventData = await response.json();
         console.log("DEBUG: eventData is", eventData);
+        if (eventData && eventData.debugInfo && eventData.debugInfo.weeks) {
+          console.log("DEBUG: Counted history weeks:", eventData.debugInfo.weeks.filter(w => w.isCounted));
+        }
         if (eventData.status === "error") {
           throw new Error(eventData.message);
         }
