@@ -358,6 +358,7 @@
         if (!response.ok) throw new Error("Không thể tải kết quả giải chạy");
         
         eventData = await response.json();
+        console.log("DEBUG: eventData is", eventData);
         if (eventData.status === "error") {
           throw new Error(eventData.message);
         }
