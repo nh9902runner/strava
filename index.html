@@ -67,7 +67,7 @@
     <!-- Loading Spinner State -->
     <div class="state-container" id="loadingState">
       <div class="spinner"></div>
-      <p>Đang tải bảng thành tích chạy bộ...</p>
+      <p>đang load dữ liệu giải chạy</p>
     </div>
 
     <!-- Empty/Error State -->
@@ -167,6 +167,7 @@
         <div class="event-meta">
           <span><i class="far fa-calendar-alt"></i> Thời gian: <strong id="eventDates">...</strong></span>
           <span><i class="fas fa-users"></i> Thành viên: <strong id="eventRunnerCount">0</strong></span>
+          <span><i class="fas fa-road"></i> Tổng số km của nhóm: <strong id="eventTotalKm">0</strong> km</span>
         </div>
       </div>
       <div id="eventLeaderboard" class="leaderboard-list">
@@ -350,7 +351,7 @@
       container.innerHTML = `
         <div class="state-container" style="padding: 40px 0;">
           <div class="spinner"></div>
-          <p style="color: var(--text-secondary); margin-top: 10px;">Đang tải bảng xếp hạng giải chạy...</p>
+          <p style="color: var(--text-secondary); margin-top: 10px;">đang load dữ liệu giải chạy</p>
         </div>`;
       
       try {
@@ -366,9 +367,13 @@
           throw new Error(eventData.message);
         }
         
+        // Tính tổng số km của cả nhóm
+        const totalKm = eventData.runners ? eventData.runners.reduce((sum, r) => sum + r.actKm, 0) : 0;
+        
         document.getElementById("eventTitle").textContent = eventData.eventName || "Giải Chạy Bộ";
         document.getElementById("eventDates").textContent = `${eventData.eventStart} - ${eventData.eventEnd}`;
         document.getElementById("eventRunnerCount").textContent = eventData.runners ? eventData.runners.length : 0;
+        document.getElementById("eventTotalKm").textContent = totalKm.toFixed(1);
         
         renderEventLeaderboard();
       } catch (error) {
@@ -397,24 +402,13 @@
         return;
       }
       
-      eventData.runners.forEach((runner, index) => {
-        const rank = index + 1;
+      eventData.runners.forEach((runner) => {
         const card = document.createElement("div");
-        card.className = `runner-card rank-${rank <= 3 ? rank : 'normal'}`;
-        
-        let rankHtml = `<span class="rank-number">${rank}</span>`;
-        if (rank === 1) {
-          rankHtml = `<span class="rank-number" style="background:var(--accent-gold); color:#000;"><i class="fas fa-crown"></i></span>`;
-        } else if (rank === 2) {
-          rankHtml = `<span class="rank-number" style="background:var(--accent-silver); color:#000;"><i class="fas fa-medal"></i></span>`;
-        } else if (rank === 3) {
-          rankHtml = `<span class="rank-number" style="background:var(--accent-bronze); color:#fff;"><i class="fas fa-medal"></i></span>`;
-        }
+        card.className = `runner-card`;
         
         card.innerHTML = `
           <div class="runner-rank-info">
-            ${rankHtml}
-            <div class="runner-meta">
+            <div class="runner-meta" style="margin-left: 10px;">
               <span class="runner-name">${runner.name}</span>
             </div>
           </div>
