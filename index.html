@@ -249,9 +249,18 @@
     }
 
     function updateBadgeTime() {
-      if (!rawData) return;
-      const time = currentActiveTab === "thisWeek" ? rawData.thisWeekUpdated : rawData.lastWeekUpdated;
       const badge = document.getElementById("updateBadge");
+      let time = "";
+      if (currentActiveTab === "event") {
+        time = eventData ? (eventData.updatedAt || "") : "";
+        // Giải đã kết thúc: hiển thị icon cờ
+        if (time && time.startsWith("Đã kết thúc")) {
+          badge.innerHTML = `<i class="fas fa-flag-checkered"></i> ${time}`;
+          return;
+        }
+      } else if (rawData) {
+        time = currentActiveTab === "thisWeek" ? rawData.thisWeekUpdated : rawData.lastWeekUpdated;
+      }
       badge.innerHTML = time ? `<i class="fas fa-hourglass-half"></i> Cập nhật: ${time}` : "";
     }
 
@@ -286,10 +295,13 @@
         historySection.style.display = "block";
         fetchHistoryData(0);
       } else if (tab === 'event') {
+        weekInfoCard.style.display = "flex";
+        document.getElementById("weekHeaderLabel").style.display = "none";
         eventSection.style.display = "block";
         fetchEventData();
       } else if (tab === 'lastWeek') {
         weekInfoCard.style.display = "flex";
+        document.getElementById("weekHeaderLabel").style.display = "";
         leaderboardList.style.display = "block";
         if (!rawData || !rawData.lastWeek || rawData.lastWeek.length === 0) {
           await fetchLastWeekData();
@@ -299,6 +311,7 @@
         }
       } else {
         weekInfoCard.style.display = "flex";
+        document.getElementById("weekHeaderLabel").style.display = "";
         leaderboardList.style.display = "block";
         updateBadgeTime();
         renderTab();
@@ -374,6 +387,9 @@
         document.getElementById("eventDates").textContent = `${eventData.eventStart} - ${eventData.eventEnd}`;
         document.getElementById("eventRunnerCount").textContent = eventData.runners ? eventData.runners.length : 0;
         document.getElementById("eventTotalKm").textContent = totalKm.toFixed(1);
+        
+        // Cập nhật badge thời gian
+        updateBadgeTime();
         
         renderEventLeaderboard();
       } catch (error) {
