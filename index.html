@@ -170,6 +170,12 @@
           <span><i class="fas fa-road"></i> Tổng số km của nhóm: <strong id="eventTotalKm">0</strong> km</span>
         </div>
       </div>
+      
+      <!-- Event Update Row (Aligned Right) -->
+      <div class="event-update-row" style="display: flex; justify-content: flex-end; margin: -10px 0 15px 0;">
+        <span class="update-badge" id="eventUpdateBadge" style="display: none;"></span>
+      </div>
+
       <div id="eventLeaderboard" class="leaderboard-list">
         <!-- Generated dynamically by JS -->
       </div>
@@ -250,15 +256,26 @@
 
     function updateBadgeTime() {
       const badge = document.getElementById("updateBadge");
-      let time = "";
+      const eventBadge = document.getElementById("eventUpdateBadge");
+      
       if (currentActiveTab === "event") {
-        time = eventData ? (eventData.updatedAt || "") : "";
-        // Giải đã kết thúc: hiển thị icon cờ
-        if (time && time.startsWith("Đã kết thúc")) {
-          badge.innerHTML = `<i class="fas fa-flag-checkered"></i> ${time}`;
-          return;
+        const time = eventData ? (eventData.updatedAt || "") : "";
+        if (time) {
+          if (time.startsWith("Đã kết thúc")) {
+            eventBadge.innerHTML = `<i class="fas fa-flag-checkered"></i> ${time}`;
+          } else {
+            eventBadge.innerHTML = `<i class="fas fa-hourglass-half"></i> Cập nhật: ${time}`;
+          }
+          eventBadge.style.display = "inline-block";
+        } else {
+          eventBadge.innerHTML = "";
+          eventBadge.style.display = "none";
         }
-      } else if (rawData) {
+        return;
+      }
+      
+      let time = "";
+      if (rawData) {
         time = currentActiveTab === "thisWeek" ? rawData.thisWeekUpdated : rawData.lastWeekUpdated;
       }
       badge.innerHTML = time ? `<i class="fas fa-hourglass-half"></i> Cập nhật: ${time}` : "";
@@ -295,8 +312,6 @@
         historySection.style.display = "block";
         fetchHistoryData(0);
       } else if (tab === 'event') {
-        weekInfoCard.style.display = "flex";
-        document.getElementById("weekHeaderLabel").style.display = "none";
         eventSection.style.display = "block";
         fetchEventData();
       } else if (tab === 'lastWeek') {
